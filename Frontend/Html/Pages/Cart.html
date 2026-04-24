@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cart</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f5f5f5;
+    padding: 20px;
+}
+
+.cart-box {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.cart-box img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+button {
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.inc { background: green; color: white; }
+.dec { background: orange; color: white; }
+.del { background: red; color: white; }
+
+.total {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>My Cart</h2>
+
+<div id="cartContainer">Loading...</div>
+
+<div class="total" id="totalPrice"></div>
+
+<script>
+
+const API = "http://127.0.0.1:8000/api/carts";
+const STORAGE = "http://127.0.0.1:8000/storage";
+
+const token = localStorage.getItem("token");
+
+let cartData = [];
+
+loadCart();
+
+// ================= LOAD CART =================
+async function loadCart() {
+
+    if (!token) {
+        document.getElementById("cartContainer").innerHTML =
+            "Please login first";
+        return;
+    }
+
+    const res = await fetch(API, {
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Accept": "application/json"
+        }
+    });
+
+    cartData = await res.json();
+
+    renderCart();
+}
+
+// ================= RENDER =================
+function renderCart() {
+
+    let html = "";
+    let total = 0;
+
+    cartData.forEach(item => {
+
+        const plant = item.plant;
+
+        if (!plant) return;
+
+        const price = parseFloat(plant.price);
+        const qty = item.quantity;
+        const subtotal = price * qty;
+
+        total += subtotal;
+
+        html += `
+        <div class="cart-box">
+            
+            <img src="${STORAGE}/${plant.image}" />
+
+            <div>
+                <h3>${plant.name}</h3>
+                <p>Price: $${price}</p>
+                <p>Qty: ${qty}</p>
+                <p>Subtotal: $${subtotal}</p>
+            </div>
+
+            <div>
+                <button class="inc" onclick="increase(${item.cart_id}, ${qty})">+</button>
+                <button class="dec" onclick="decrease(${item.cart_id}, ${qty})">-</button>
+                <button class="del" onclick="removeItem(${item.cart_id})">Delete</button>
+            </div>
+
+        </div>
+        `;
+    });
+
+    document.getElementById("cartContainer").innerHTML = html;
+    document.getElementById("totalPrice").innerText = "Total: $" + total.toFixed(2);
+}
+
+// ================= INCREASE =================
+async function increase(id, qty) {
+
+    await fetch(`${API}/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            quantity: qty + 1
+        })
+    });
+
+    loadCart();
+}
+
+// ================= DECREASE =================
+async function decrease(id, qty) {
+
+    if (qty <= 1) return;
+
+    await fetch(`${API}/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            quantity: qty - 1
+        })
+    });
+
+    loadCart();
+}
+
+// ================= DELETE =================
+async function removeItem(id) {
+
+    await fetch(`${API}/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    loadCart();
+}
+
+</script>
+
+</body>
+</html>

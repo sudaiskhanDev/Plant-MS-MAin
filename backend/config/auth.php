@@ -40,7 +40,8 @@ return [
     'guards' => [
     'api' => [
         'driver' => 'jwt',
-        'provider' => 'admin_staff',
+        'provider' => 'users',
+        // 'provider' => 'admin_staff',
     ],
      'user_api' => [
         'driver' => 'jwt',
