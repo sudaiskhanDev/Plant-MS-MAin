@@ -22,4 +22,11 @@ class Plant extends Model
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
+
+
+    
+    public function orderDetails()
+{
+    return $this->hasMany(OrderDetail::class, 'plant_id');
+}
 }

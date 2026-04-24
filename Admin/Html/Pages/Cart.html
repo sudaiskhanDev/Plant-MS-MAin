@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+    <title>Cart CRUD</title>
+</head>
+<body>
+
+<div class="main-admin-dashboard">
+
+    <!-- SIDEBAR -->
+    <div class="side-bar">
+        <h1>Admin Dashboard</h1>
+
+        <div class="pages-links">
+            <ul>
+                <a href="#">Cart Module</a>
+            </ul>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="dashboard-content">
+
+        <h2>Cart CRUD</h2>
+
+        <!-- ADD FORM -->
+        <div>
+            <input type="number" id="user_id" placeholder="User ID">
+            <input type="number" id="plant_id" placeholder="Plant ID">
+            <input type="number" id="quantity" placeholder="Quantity">
+
+            <button onclick="addCart()">Add to Cart</button>
+        </div>
+
+        <hr>
+
+        <!-- CART LIST -->
+        <div id="cartList"></div>
+
+    </div>
+
+</div>
+
+<script>
+const API = "http://127.0.0.1:8000/api/cart";
+
+// 📥 LOAD CART
+function loadCart() {
+    fetch(API)
+        .then(res => res.json())
+        .then(data => {
+            let html = "";
+
+            data.forEach(item => {
+                html += `
+                    <div style="border:1px solid #000; padding:10px; margin:10px;">
+                        <p>Cart ID: ${item.cart_id}</p>
+                        <p>Plant: ${item.plant_id}</p>
+                        <p>Quantity: ${item.quantity}</p>
+
+                        <button onclick="deleteCart(${item.cart_id})">Delete</button>
+
+                        <input type="number" id="update-${item.cart_id}" placeholder="New Qty">
+                        <button onclick="updateCart(${item.cart_id})">Update</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById("cartList").innerHTML = html;
+        });
+}
+
+// ➕ ADD CART
+function addCart() {
+    fetch(API, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            user_id: document.getElementById("user_id").value,
+            plant_id: document.getElementById("plant_id").value,
+            quantity: document.getElementById("quantity").value
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        loadCart();
+    });
+}
+
+// ✏️ UPDATE CART
+function updateCart(id) {
+    let qty = document.getElementById("update-" + id).value;
+
+    fetch(API + "/" + id, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            quantity: qty
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        loadCart();
+    });
+}
+
+// ❌ DELETE
+function deleteCart(id) {
+    fetch(API + "/" + id, {
+        method: "DELETE"
+    })
+    .then(() => {
+        loadCart();
+    });
+}
+
+// INIT
+loadCart();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders CRUD Panel</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .box {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .create {
+            background: green;
+            color: white;
+            border: none;
+        }
+
+        .update {
+            background: orange;
+            color: white;
+            border: none;
+        }
+
+        .delete {
+            background: red;
+            color: white;
+            border: none;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #333;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>FULL CRUD Orders Panel</h2>
+
+<!-- ================= CREATE ================= -->
+<div class="box">
+    <h3>Create Order</h3>
+
+    <input type="number" id="user_id" placeholder="User ID">
+    <input type="number" id="total_amount" placeholder="Total Amount">
+
+    <select id="status">
+        <option value="pending">pending</option>
+        <option value="completed">completed</option>
+        <option value="cancelled">cancelled</option>
+    </select>
+
+    <button class="create" onclick="createOrder()">Create</button>
+</div>
+
+<!-- ================= TABLE ================= -->
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody id="ordersTable"></tbody>
+</table>
+
+<script>
+
+const API = "http://127.0.0.1:8000/api/orders";
+
+// ================= READ =================
+async function getOrders() {
+    const res = await fetch(API);
+    const data = await res.json();
+
+    let rows = "";
+
+    data.forEach(order => {
+        rows += `
+            <tr>
+                <td>${order.order_id}</td>
+                <td>
+                    <input id="user-${order.order_id}" value="${order.user_id}">
+                </td>
+                <td>
+                    <input id="total-${order.order_id}" value="${order.total_amount}">
+                </td>
+                <td>
+                    <select id="status-${order.order_id}">
+                        <option ${order.status === "pending" ? "selected" : ""}>pending</option>
+                        <option ${order.status === "completed" ? "selected" : ""}>completed</option>
+                        <option ${order.status === "cancelled" ? "selected" : ""}>cancelled</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="update" onclick="updateOrder(${order.order_id})">Update</button>
+                    <button class="delete" onclick="deleteOrder(${order.order_id})">Delete</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("ordersTable").innerHTML = rows;
+}
+
+// ================= CREATE =================
+async function createOrder() {
+
+    const user_id = document.getElementById("user_id").value;
+    const total_amount = document.getElementById("total_amount").value;
+    const status = document.getElementById("status").value;
+
+    await fetch(API, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            user_id,
+            total_amount,
+            status
+        })
+    });
+
+    alert("Order Created");
+    getOrders();
+}
+
+// ================= UPDATE =================
+async function updateOrder(id) {
+
+    const user_id = document.getElementById(`user-${id}`).value;
+    const total_amount = document.getElementById(`total-${id}`).value;
+    const status = document.getElementById(`status-${id}`).value;
+
+    await fetch(`${API}/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            user_id,
+            total_amount,
+            status
+        })
+    });
+
+    alert("Order Updated");
+    getOrders();
+}
+
+// ================= DELETE =================
+async function deleteOrder(id) {
+
+    await fetch(`${API}/${id}`, {
+        method: "DELETE"
+    });
+
+    alert("Order Deleted");
+    getOrders();
+}
+
+// initial load
+getOrders();
+
+</script>
+
+</body>
+</html>
