@@ -4,47 +4,192 @@
 <meta charset="UTF-8">
 <title>Product Details</title>
 
-<style>
-body {
-    font-family: Arial;
-    background: #f5f5f5;
-    padding: 20px;
-}
+ <style>
+        /* ============================================
+           GREENNEST DESIGN TOKENS
+           ============================================ */
+        :root {
+            --primary: #76A845;
+            --primary-hover: #5E8C33;
+            --soft-mint: #BCE7B8;
+            --header-glow: #E8F5E9;
+            --clean-base: #FFFFFF;
+            --core-text: #1A1A1A;
+            --text-muted: #4A4A4A;
+            --accent-gold: #C6A56A;   /* kept from original, but now as a secondary accent */
 
-.container {
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-}
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-btn: 20px;
 
-img {
-    width: 100%;
-    border-radius: 10px;
-}
+            --shadow-card: 0 8px 24px rgba(26, 26, 26, 0.06);
+            --shadow-btn: 0 6px 14px rgba(118, 168, 69, 0.3);
+        }
 
-.price {
-    color: #C6A56A;
-    font-size: 20px;
-    font-weight: bold;
-}
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-button {
-    background: #1b3022;
-    color: white;
-    padding: 10px;
-    border: none;
-    width: 100%;
-    margin-top: 15px;
-    border-radius: 6px;
-    cursor: pointer;
-}
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--header-glow) 0%, var(--clean-base) 100%);
+            color: var(--core-text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
 
-button:hover {
-    background: #344e41;
-}
-</style>
+        /* ============================================
+           PRODUCT CARD / CONTAINER
+           ============================================ */
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--clean-base);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px;
+            box-shadow: var(--shadow-card);
+            text-align: center;
+        }
+
+        /* Loading / empty text */
+        .container:empty::after,
+        .container:not(:has(img)) {
+            content: "Loading plant details… 🌿";
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           PRODUCT IMAGE
+           ============================================ */
+        .container img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            border: 2px solid var(--soft-mint);
+            background: var(--header-glow); /* soft background if image has transparency */
+        }
+
+        /* ============================================
+           TEXT STYLES
+           ============================================ */
+        .container h2 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            color: var(--core-text);
+        }
+
+        .container .price {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);   /* Primary green instead of gold – or you can keep #C6A56A */
+            margin-bottom: 12px;
+        }
+
+        .container p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .container p b {
+            color: var(--core-text);
+            font-weight: 600;
+        }
+
+        /* Description block */
+        .container .description {
+            font-style: italic;
+            color: var(--text-muted);
+            margin: 16px 0 24px;
+        }
+
+        /* ============================================
+           ADD TO CART BUTTON (High-contrast CTA)
+           ============================================ */
+        .container button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: var(--clean-base);
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .container button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-btn);
+        }
+
+        .container button:active {
+            transform: translateY(0);
+        }
+
+        .container button:focus-visible {
+            outline: 3px dashed var(--primary);
+            outline-offset: 3px;
+        }
+
+        /* ============================================
+           CART LINK (styled as a secondary button)
+           ============================================ */
+        .cart-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 24px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--soft-mint);
+            border-radius: var(--radius-btn);
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .cart-link:hover {
+            background-color: var(--soft-mint);
+            color: var(--core-text);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(118, 168, 69, 0.15);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 20px;
+            }
+            .container h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 
 </head>
 <body>

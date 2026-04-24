@@ -16,3 +16,6 @@ require __DIR__.'/supplier.php';
 require __DIR__.'/supplier_orders.php';
 require __DIR__.'/notification.php';
 require __DIR__.'/report.php';
+require __DIR__.'/checkout.php';
+
+

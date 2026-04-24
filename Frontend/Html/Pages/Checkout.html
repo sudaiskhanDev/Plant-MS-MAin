@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f5f5f5;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h2 {
+    text-align: center;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #1b3022;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #344e41;
+}
+
+.cart-box {
+    background: #fafafa;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.total {
+    font-weight: bold;
+    text-align: right;
+    margin-top: 10px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Checkout</h2>
+
+<!-- CART PREVIEW -->
+<div id="cartContainer" class="cart-box">
+    Loading cart...
+</div>
+
+<div id="totalBox" class="total"></div>
+
+<!-- USER INFO -->
+<input type="text" id="name" placeholder="Full Name">
+<input type="text" id="phone" placeholder="Phone">
+<input type="text" id="city" placeholder="City">
+<input type="text" id="zip" placeholder="Zip (optional)">
+<input type="text" id="address" placeholder="Shipping Address">
+
+<select id="payment_method">
+    <option value="cod">Cash on Delivery</option>
+    <option value="card">Card (Stripe)</option>
+</select>
+
+<button onclick="placeOrder()">Place Order</button>
+
+</div>
+
+<script>
+
+const API = "http://127.0.0.1:8000/api";
+const CART_API = `${API}/carts`;
+const CHECKOUT_API = `${API}/checkout`;
+
+const token = localStorage.getItem("token");
+
+let cartItems = [];
+let totalAmount = 0;
+
+// ---------------- LOAD CART ----------------
+async function loadCart() {
+
+    let res = await fetch(CART_API, {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    let data = await res.json();
+    cartItems = data;
+
+    let container = document.getElementById("cartContainer");
+    container.innerHTML = "";
+    totalAmount = 0;
+
+    if (cartItems.length === 0) {
+        container.innerHTML = "Cart is empty";
+        return;
+    }
+
+    cartItems.forEach(item => {
+
+        let price = item.plant.price * item.quantity;
+        totalAmount += price;
+
+        container.innerHTML += `
+            <div class="item">
+                <span>${item.plant.name} x ${item.quantity}</span>
+                <span>$${price}</span>
+            </div>
+        `;
+    });
+
+    document.getElementById("totalBox").innerHTML =
+        "Total: $" + totalAmount;
+}
+
+// ---------------- PLACE ORDER ----------------
+async function placeOrder() {
+
+    if (cartItems.length === 0) {
+        alert("Cart is empty");
+        return;
+    }
+
+    let payload = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        city: document.getElementById("city").value,
+        zip: document.getElementById("zip").value,
+        shipping_address: document.getElementById("address").value,
+        payment_method: document.getElementById("payment_method").value
+    };
+
+    let res = await fetch(CHECKOUT_API, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(payload)
+    });
+
+    let result = await res.json();
+
+    if (res.ok) {
+        alert("Order placed successfully!");
+        window.location.href = "thankyou.html";
+    } else {
+        alert(result.message || "Checkout failed");
+    }
+}
+
+loadCart();
+
+</script>
+
+</body>
+</html>

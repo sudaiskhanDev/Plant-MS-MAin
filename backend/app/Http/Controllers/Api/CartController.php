@@ -19,35 +19,67 @@ class CartController extends Controller
     }
 
     // ADD TO CART (FIXED)
+
     public function store(Request $request)
-    {
-        $request->validate([
-            'plant_id' => 'required',
-            'quantity' => 'required|integer|min:1'
-        ]);
+{
+    $request->validate([
+        'plant_id' => 'required|exists:plants,plant_id',
+        'quantity' => 'required|integer|min:1'
+    ]);
 
-        $userId = auth()->id();
+    $userId = auth()->id();
 
-        // check if already exists
+    $cart = Cart::where('user_id', $userId)
+                ->where('plant_id', $request->plant_id)
+                ->first();
+
+    if ($cart) {
+        // already exists → increase quantity
+        $cart->quantity += $request->quantity;
+        $cart->save();
+    } else {
+        // new item
         $cart = Cart::create([
-    'user_id' => auth()->id(),
-    'plant_id' => $request->plant_id,
-    'quantity' => $request->quantity
-]);
-
-        if ($cart) {
-            $cart->quantity += $request->quantity;
-            $cart->save();
-        } else {
-            $cart = Cart::create([
-                'user_id' => $userId,
-                'plant_id' => $request->plant_id,
-                'quantity' => $request->quantity
-            ]);
-        }
-
-        return response()->json($cart, 201);
+            'user_id' => $userId,
+            'plant_id' => $request->plant_id,
+            'quantity' => $request->quantity
+        ]);
     }
+
+    return response()->json([
+        'message' => 'Cart updated',
+        'cart' => $cart
+    ]);
+}
+//     public function store(Request $request)
+//     {
+//         $request->validate([
+//             'plant_id' => 'required',
+//             'quantity' => 'required|integer|min:1'
+//         ]);
+
+//         $userId = auth()->id();
+
+//         // check if already exists
+//         $cart = Cart::create([
+//     'user_id' => auth()->id(),
+//     'plant_id' => $request->plant_id,
+//     'quantity' => $request->quantity
+// ]);
+
+//         if ($cart) {
+//             $cart->quantity += $request->quantity;
+//             $cart->save();
+//         } else {
+//             $cart = Cart::create([
+//                 'user_id' => $userId,
+//                 'plant_id' => $request->plant_id,
+//                 'quantity' => $request->quantity
+//             ]);
+//         }
+
+//         return response()->json($cart, 201);
+//     }
 
     public function show($id)
     {
