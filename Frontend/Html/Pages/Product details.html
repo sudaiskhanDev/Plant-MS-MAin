@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Product Details</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #0f1a13;
+    margin: 0;
+    padding: 0;
+}
+ 
+.nav-bar {
+    height: 60px;
+    background: #1b3022;
+    margin-bottom: 40px;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: #1b3022;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    display: flex;
+    gap: 40px;
+    align-items: start;
+}
+
+.product-image {
+    flex: 1;
+}
+
+.product-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.product-info {
+    flex: 1;
+}
+
+h2 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.price {
+    color: #C6A56A;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.stock {
+    display: inline-block;
+    padding: 5px 12px;
+    background: #2d4a36;
+    color: #81c784;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.description {
+    line-height: 1.6;
+    color: #b0bec5;
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        margin: 20px;
+    }
+}
+</style>
+
+</head>
+<body>
+
+<div class="nav-bar"></div>
+
+<div class="container" id="productDetail">
+    Loading...
+</div>
+
+<script>
+
+const API = "http://127.0.0.1:8000/api/plants";
+
+// 🔥 GET ID FROM URL
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+loadProduct();
+
+async function loadProduct() {
+
+    const res = await fetch(`${API}/${id}`, {
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    const p = await res.json();
+
+    const container = document.getElementById("productDetail");
+
+    container.innerHTML = `
+        <div class="product-image">
+            <img src="http://127.0.0.1:8000/storage/${p.image}" />
+        </div>
+        <div class="product-info">
+            <h2>${p.name}</h2>
+            <p class="price">$${p.price}</p>
+            <div class="stock">In Stock: ${p.stock_quantity}</div>
+            <p class="description">${p.description || "No description available."}</p>
+        </div>
+    `;
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,420 @@
+/* ============================================
+   GREENNEST – MAIN PAGE CSS
+   Palette: #76A845, #BCE7B8, #E8F5E9, #FFFFFF, #1A1A1A
+   Typography: Inter Bold (headings), Roboto (body)
+   ============================================ */
+
+/* ---- Google Fonts ---- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap');
+
+/* ============================================
+   DESIGN TOKENS (reusable values)
+   ============================================ */
+:root {
+  --primary: #76A845;
+  --primary-hover: #5E8C33;
+  --soft-mint: #BCE7B8;
+  --header-glow: #E8F5E9;
+  --clean-base: #FFFFFF;
+  --core-text: #1A1A1A;
+  --text-muted: #4A4A4A;
+  
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-btn: 20px;
+  
+  --shadow-sm: 0 4px 12px rgba(26, 26, 26, 0.05);
+  --shadow-md: 0 8px 24px rgba(26, 26, 26, 0.06);
+  --shadow-hover: 0 12px 24px rgba(118, 168, 69, 0.2);
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--clean-base);
+  color: var(--core-text);
+  line-height: 1.5;
+}
+
+/* ============================================
+   MAIN PAGE WRAPPER
+   ============================================ */
+.main-page {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   NAVIGATION BAR
+   ============================================ */
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: linear-gradient(
+    to bottom,
+    var(--clean-base) 0%,
+    var(--header-glow) 100%
+  );
+  border-bottom: 1px solid rgba(118, 168, 69, 0.15);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- Brand Logo --- */
+.nav-bar h1 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+  color: var(--core-text);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.nav-bar h1:hover {
+  color: var(--primary);
+}
+
+/* --- Navigation Links --- */
+.nav-bar ul {
+  list-style: none;
+  display: flex;
+  gap: 32px;
+  margin: 0 auto 0 48px;
+}
+
+.nav-bar a {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  text-decoration: none;
+  color: var(--core-text);
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  position: relative;
+}
+
+.nav-bar a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: var(--primary);
+  transition: width 0.25s ease;
+}
+
+.nav-bar a:hover {
+  color: var(--primary);
+  background-color: rgba(188, 231, 184, 0.2);
+}
+
+.nav-bar a:hover::after {
+  width: 100%;
+}
+
+/* --- Button Container (right side) --- */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Both guest and user button groups are flex rows */
+#guestButtons,
+#userButtons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* User buttons hidden by default (JS will set display:flex/block) */
+#userButtons {
+  display: none;
+}
+
+/* ============================================
+   AUTH BUTTONS (Login, Register, Logout)
+   ============================================ */
+/* Shared button base */
+.login-btn,
+.register-btn,
+.logout-btn {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px 24px;
+  border-radius: var(--radius-btn);
+  border: 2px solid transparent;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* Login – outlined with Soft Mint */
+.login-btn {
+  background: transparent;
+  color: var(--core-text);
+  border-color: var(--soft-mint);
+}
+
+.login-btn:hover {
+  background-color: var(--soft-mint);
+  color: var(--core-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(118, 168, 69, 0.15);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+/* Register – high-contrast Primary Action */
+.register-btn {
+  background-color: var(--primary);
+  color: var(--clean-base);
+  border-color: var(--primary);
+}
+
+.register-btn:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(118, 168, 69, 0.35);
+}
+
+.register-btn:active {
+  transform: translateY(0);
+}
+
+/* Logout – subtle red-tinted removal, but keeping with the design */
+.logout-btn {
+  background: transparent;
+  color: var(--core-text);
+  border-color: var(--soft-mint);
+  /* You could add a slightly different hue like #E57373 if needed, but staying within palette */
+}
+
+.logout-btn:hover {
+  background-color: #F8D7DA;   /* very soft red */
+  color: #721C24;
+  border-color: #F5C6CB;
+  transform: translateY(-1px);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
+/* Focus visible for all buttons */
+.login-btn:focus-visible,
+.register-btn:focus-visible,
+.logout-btn:focus-visible {
+  outline: 3px dashed var(--primary);
+  outline-offset: 3px;
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.hero-section {
+  width: 100%;
+}
+
+.slider-track {
+  position: relative;
+  width: 100%;
+  max-height: 500px;
+  overflow: hidden;
+  border-radius: 0 0 40px 40px;
+  box-shadow: var(--shadow-md);
+}
+
+.slider-track img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Soft green overlay (Header Glow + Soft Mint) */
+.slider-track::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(232, 245, 233, 0.45) 0%,
+    rgba(188, 231, 184, 0.15) 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ============================================
+   CATEGORIES GRID
+   ============================================ */
+.categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 44px auto 64px auto;
+  padding: 0 40px;
+}
+
+/* Individual Category Card */
+.plant-category {
+  background-color: var(--soft-mint);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  text-align: center;
+}
+
+.plant-category:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  background-color: var(--clean-base);
+  outline: 2px solid var(--primary);
+}
+
+/* Category Image */
+.plant-category img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  transition: transform 0.3s ease;
+}
+
+.plant-category:hover img {
+  transform: scale(1.03);
+}
+
+/* Category Title */
+.plant-category h3 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--core-text);
+  letter-spacing: -0.2px;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.plant-category:hover h3 {
+  color: var(--primary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .nav-bar {
+    padding: 14px 20px;
+    flex-wrap: wrap;
+  }
+
+  .nav-bar ul {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    margin: 12px 0 0 0;
+    gap: 24px;
+  }
+
+  .btn {
+    gap: 10px;
+  }
+
+  .login-btn,
+  .register-btn,
+  .logout-btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .slider-track {
+    max-height: 320px;
+    border-radius: 0 0 28px 28px;
+  }
+
+  .categories {
+    gap: 16px;
+    margin: 32px auto 48px auto;
+    padding: 0 20px;
+  }
+
+  .plant-category {
+    padding: 14px;
+  }
+
+  .plant-category img {
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-bar {
+    padding: 12px 16px;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .nav-bar h1 {
+    font-size: 1.5rem;
+  }
+
+  .nav-bar ul {
+    gap: 18px;
+  }
+
+  .slider-track {
+    max-height: 250px;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .categories {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .plant-category {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .plant-category img {
+    height: 110px;
+    border-radius: 10px;
+  }
+
+  .plant-category h3 {
+    font-size: 0.9rem;
+  }
+}
