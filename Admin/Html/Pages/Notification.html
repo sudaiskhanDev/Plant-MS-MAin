@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+    <title>Admin Dashboard - Notifications</title>
+</head>
+<body>
+
+<div class="main-admin-dashboard">
+
+    <!-- SIDEBAR -->
+    <div class="side-bar">
+        <h1>Admin Dashboard</h1>
+
+        <div class="pages-links">
+            <ul>
+                <a href="#">Categories</a>
+                <a href="#" onclick="loadNotifications()">Notifications</a>
+            </ul>
+        </div>
+    </div>
+
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-content">
+
+        <h2>Notification Management</h2>
+
+        <!-- FORM -->
+        <div>
+            <h3>Add / Update Notification</h3>
+
+            <input type="number" id="admin_staff_id" placeholder="Admin Staff ID">
+            <input type="text" id="message" placeholder="Message">
+
+            <select id="type">
+                <option value="stock">Stock</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="order">Order</option>
+            </select>
+
+            <input type="date" id="date">
+
+            <button onclick="saveNotification()">Save</button>
+        </div>
+
+        <hr>
+
+        <!-- TABLE -->
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Admin Staff ID</th>
+                    <th>Message</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="notificationTable"></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const API_URL = "http://localhost:8000/api/notifications";
+
+let editMode = false;
+let editId = null;
+
+
+// 📥 READ
+function loadNotifications() {
+    fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+            let rows = "";
+
+            data.forEach(n => {
+                rows += `
+                <tr>
+                    <td>${n.notification_id}</td>
+                    <td>${n.admin_staff_id}</td>
+                    <td>${n.message}</td>
+                    <td>${n.type}</td>
+                    <td>${n.date}</td>
+                    <td>
+                        <button onclick="editNotification(${n.notification_id}, ${n.admin_staff_id}, '${n.message}', '${n.type}', '${n.date}')">Edit</button>
+                        <button onclick="deleteNotification(${n.notification_id})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            document.getElementById("notificationTable").innerHTML = rows;
+        });
+}
+
+
+// ➕ ➕ CREATE / ✏️ UPDATE
+function saveNotification() {
+
+    let data = {
+        admin_staff_id: document.getElementById("admin_staff_id").value,
+        message: document.getElementById("message").value,
+        type: document.getElementById("type").value,
+        date: document.getElementById("date").value
+    };
+
+    if (editMode) {
+
+        // ✏️ UPDATE
+        fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            editMode = false;
+            editId = null;
+            clearForm();
+            loadNotifications();
+        });
+
+    } else {
+
+        // ➕ CREATE
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            clearForm();
+            loadNotifications();
+        });
+    }
+}
+
+
+// ✏️ EDIT
+function editNotification(id, admin_staff_id, message, type, date) {
+    document.getElementById("admin_staff_id").value = admin_staff_id;
+    document.getElementById("message").value = message;
+    document.getElementById("type").value = type;
+    document.getElementById("date").value = date;
+
+    editMode = true;
+    editId = id;
+}
+
+
+// ❌ DELETE
+function deleteNotification(id) {
+    fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    })
+    .then(() => {
+        loadNotifications();
+    });
+}
+
+
+// 🧹 CLEAR FORM
+function clearForm() {
+    document.getElementById("admin_staff_id").value = "";
+    document.getElementById("message").value = "";
+    document.getElementById("type").value = "stock";
+    document.getElementById("date").value = "";
+}
+
+
+// AUTO LOAD
+loadNotifications();
+
+</script>
+
+</body>
+</html>

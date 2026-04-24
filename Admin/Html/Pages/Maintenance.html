@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
-    <title>Admin Dashboard - Order Details</title>
+    <title>Admin Dashboard - Maintenance</title>
 </head>
 <body>
 
@@ -17,7 +17,7 @@
         <div class="pages-links">
             <ul>
                 <a href="#">Categories</a>
-                <a href="#" onclick="loadOrderDetails()">Order Details</a>
+                <a href="#" onclick="loadMaintenance()">Maintenance</a>
             </ul>
         </div>
     </div>
@@ -25,18 +25,18 @@
     <!-- DASHBOARD CONTENT -->
     <div class="dashboard-content">
 
-        <h2>Order Details Management</h2>
+        <h2>Maintenance Management</h2>
 
         <!-- CREATE FORM -->
         <div>
-            <h3>Add Order Detail</h3>
+            <h3>Add Maintenance Task</h3>
 
-            <input type="number" id="order_id" placeholder="Order ID">
             <input type="number" id="plant_id" placeholder="Plant ID">
-            <input type="number" id="quantity" placeholder="Quantity">
-            <input type="number" id="price" placeholder="Price">
+            <input type="text" id="task_type" placeholder="Task Type (watering/pruning/fertilization)">
+            <input type="date" id="scheduled_date">
+            <input type="text" id="status" placeholder="Status">
 
-            <button onclick="createOrderDetail()">Add</button>
+            <button onclick="createMaintenance()">Add</button>
         </div>
 
         <hr>
@@ -46,14 +46,14 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Order ID</th>
                     <th>Plant ID</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
+                    <th>Task Type</th>
+                    <th>Scheduled Date</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody id="orderDetailTable"></tbody>
+            <tbody id="maintenanceTable"></tbody>
         </table>
 
     </div>
@@ -62,11 +62,11 @@
 
 <script>
 
-const API_URL = "http://localhost:8000/api/order-details";
+const API_URL = "http://localhost:8000/api/maintenances";
 
 
 // 📥 READ
-function loadOrderDetails() {
+function loadMaintenance() {
     fetch(API_URL)
         .then(res => res.json())
         .then(data => {
@@ -75,56 +75,56 @@ function loadOrderDetails() {
             data.forEach(item => {
                 rows += `
                 <tr>
-                    <td>${item.order_detail_id}</td>
-                    <td>${item.order_id}</td>
+                    <td>${item.maintenance_id}</td>
                     <td>${item.plant_id}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.price}</td>
+                    <td>${item.task_type}</td>
+                    <td>${item.scheduled_date}</td>
+                    <td>${item.status}</td>
                     <td>
-                        <button onclick="deleteOrderDetail(${item.order_detail_id})">Delete</button>
+                        <button onclick="deleteMaintenance(${item.maintenance_id})">Delete</button>
                     </td>
                 </tr>`;
             });
 
-            document.getElementById("orderDetailTable").innerHTML = rows;
+            document.getElementById("maintenanceTable").innerHTML = rows;
         });
 }
 
 
 // ➕ CREATE
-function createOrderDetail() {
+function createMaintenance() {
     fetch(API_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            order_id: document.getElementById("order_id").value,
             plant_id: document.getElementById("plant_id").value,
-            quantity: document.getElementById("quantity").value,
-            price: document.getElementById("price").value
+            task_type: document.getElementById("task_type").value,
+            scheduled_date: document.getElementById("scheduled_date").value,
+            status: document.getElementById("status").value
         })
     })
     .then(res => res.json())
     .then(() => {
-        loadOrderDetails();
+        loadMaintenance();
     });
 }
 
 
 // ❌ DELETE
-function deleteOrderDetail(id) {
+function deleteMaintenance(id) {
     fetch(`${API_URL}/${id}`, {
         method: "DELETE"
     })
     .then(() => {
-        loadOrderDetails();
+        loadMaintenance();
     });
 }
 
 
 // AUTO LOAD
-loadOrderDetails();
+loadMaintenance();
 
 </script>
 

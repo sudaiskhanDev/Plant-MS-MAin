@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+    <title>Admin Dashboard - Reports</title>
+</head>
+<body>
+
+<div class="main-admin-dashboard">
+
+    <!-- SIDEBAR -->
+    <div class="side-bar">
+        <h1>Admin Dashboard</h1>
+
+        <div class="pages-links">
+            <ul>
+                <a href="#">Categories</a>
+                <a href="#" onclick="loadReports()">Reports</a>
+            </ul>
+        </div>
+    </div>
+
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-content">
+
+        <h2>Report Management</h2>
+
+        <!-- FORM -->
+        <div>
+            <h3>Add / Update Report</h3>
+
+            <input type="text" id="type" placeholder="Report Type">
+            <input type="date" id="generated_date">
+
+            <button onclick="saveReport()">Save</button>
+        </div>
+
+        <hr>
+
+        <!-- TABLE -->
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Generated Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="reportTable"></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const API_URL = "http://localhost:8000/api/reports";
+
+let editMode = false;
+let editId = null;
+
+
+// 📥 READ
+function loadReports() {
+    fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+            let rows = "";
+
+            data.forEach(r => {
+                rows += `
+                <tr>
+                    <td>${r.report_id}</td>
+                    <td>${r.type}</td>
+                    <td>${r.generated_date}</td>
+                    <td>
+                        <button onclick="editReport(${r.report_id}, '${r.type}', '${r.generated_date}')">Edit</button>
+                        <button onclick="deleteReport(${r.report_id})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            document.getElementById("reportTable").innerHTML = rows;
+        });
+}
+
+
+// ➕ ➕ CREATE / ✏️ UPDATE
+function saveReport() {
+
+    let data = {
+        type: document.getElementById("type").value,
+        generated_date: document.getElementById("generated_date").value
+    };
+
+    if (editMode) {
+
+        // ✏️ UPDATE
+        fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            editMode = false;
+            editId = null;
+            clearForm();
+            loadReports();
+        });
+
+    } else {
+
+        // ➕ CREATE
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            clearForm();
+            loadReports();
+        });
+    }
+}
+
+
+// ✏️ EDIT
+function editReport(id, type, generated_date) {
+    document.getElementById("type").value = type;
+    document.getElementById("generated_date").value = generated_date;
+
+    editMode = true;
+    editId = id;
+}
+
+
+// ❌ DELETE
+function deleteReport(id) {
+    fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    })
+    .then(() => {
+        loadReports();
+    });
+}
+
+
+// 🧹 CLEAR FORM
+function clearForm() {
+    document.getElementById("type").value = "";
+    document.getElementById("generated_date").value = "";
+}
+
+
+// AUTO LOAD
+loadReports();
+
+</script>
+
+</body>
+</html>

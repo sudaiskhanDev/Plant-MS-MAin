@@ -4,78 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
-    <title>Cart CRUD</title>
+    <title>Cart Dashboard</title>
 </head>
 <body>
 
 <div class="main-admin-dashboard">
 
-    <!-- SIDEBAR -->
+    <!-- Sidebar -->
     <div class="side-bar">
         <h1>Admin Dashboard</h1>
 
         <div class="pages-links">
             <ul>
-                <a href="#">Cart Module</a>
+                <a href="#">Categories</a>
+                <a href="#" onclick="loadCarts()">Carts</a>
             </ul>
         </div>
     </div>
 
-    <!-- CONTENT -->
+    <!-- DASHBOARD CONTENT -->
     <div class="dashboard-content">
 
-        <h2>Cart CRUD</h2>
+        <h2>Cart Management</h2>
 
-        <!-- ADD FORM -->
+        <!-- CREATE FORM -->
         <div>
+            <h3>Add Cart</h3>
+
             <input type="number" id="user_id" placeholder="User ID">
             <input type="number" id="plant_id" placeholder="Plant ID">
             <input type="number" id="quantity" placeholder="Quantity">
 
-            <button onclick="addCart()">Add to Cart</button>
+            <button onclick="createCart()">Add</button>
         </div>
 
         <hr>
 
-        <!-- CART LIST -->
-        <div id="cartList"></div>
+        <!-- TABLE -->
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>Cart ID</th>
+                    <th>User ID</th>
+                    <th>Plant ID</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="cartTable"></tbody>
+        </table>
 
     </div>
 
 </div>
 
 <script>
-const API = "http://127.0.0.1:8000/api/cart";
+const API_URL = "http://localhost:8000/api/carts";
 
-// 📥 LOAD CART
-function loadCart() {
-    fetch(API)
+// 🔄 READ (GET ALL)
+function loadCarts() {
+    fetch(API_URL)
         .then(res => res.json())
         .then(data => {
-            let html = "";
+            let rows = "";
 
-            data.forEach(item => {
-                html += `
-                    <div style="border:1px solid #000; padding:10px; margin:10px;">
-                        <p>Cart ID: ${item.cart_id}</p>
-                        <p>Plant: ${item.plant_id}</p>
-                        <p>Quantity: ${item.quantity}</p>
-
-                        <button onclick="deleteCart(${item.cart_id})">Delete</button>
-
-                        <input type="number" id="update-${item.cart_id}" placeholder="New Qty">
-                        <button onclick="updateCart(${item.cart_id})">Update</button>
-                    </div>
-                `;
+            data.forEach(cart => {
+                rows += `
+                <tr>
+                    <td>${cart.cart_id}</td>
+                    <td>${cart.user_id}</td>
+                    <td>${cart.plant_id}</td>
+                    <td>${cart.quantity}</td>
+                    <td>
+                        <button onclick="deleteCart(${cart.cart_id})">Delete</button>
+                    </td>
+                </tr>`;
             });
 
-            document.getElementById("cartList").innerHTML = html;
+            document.getElementById("cartTable").innerHTML = rows;
         });
 }
 
-// ➕ ADD CART
-function addCart() {
-    fetch(API, {
+// ➕ CREATE
+function createCart() {
+    fetch(API_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -88,42 +100,22 @@ function addCart() {
     })
     .then(res => res.json())
     .then(() => {
-        loadCart();
-    });
-}
-
-// ✏️ UPDATE CART
-function updateCart(id) {
-    let qty = document.getElementById("update-" + id).value;
-
-    fetch(API + "/" + id, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            quantity: qty
-        })
-    })
-    .then(res => res.json())
-    .then(() => {
-        loadCart();
+        loadCarts();
     });
 }
 
 // ❌ DELETE
 function deleteCart(id) {
-    fetch(API + "/" + id, {
+    fetch(`${API_URL}/${id}`, {
         method: "DELETE"
     })
     .then(() => {
-        loadCart();
+        loadCarts();
     });
 }
 
-// INIT
-loadCart();
-
+// AUTO LOAD
+loadCarts();
 </script>
 
 </body>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+    <title>Admin Dashboard - Payments</title>
+</head>
+<body>
+
+<div class="main-admin-dashboard">
+
+    <!-- SIDEBAR -->
+    <div class="side-bar">
+        <h1>Admin Dashboard</h1>
+
+        <div class="pages-links">
+            <ul>
+                <a href="#">Categories</a>
+                <a href="#" onclick="loadPayments()">Payments</a>
+            </ul>
+        </div>
+    </div>
+
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-content">
+
+        <h2>Payment Management</h2>
+
+        <!-- CREATE FORM -->
+        <div>
+            <h3>Add Payment</h3>
+
+            <input type="number" id="order_id" placeholder="Order ID">
+            <input type="number" id="amount" placeholder="Amount">
+            <input type="date" id="payment_date">
+            <input type="text" id="payment_method" placeholder="Payment Method">
+            <input type="text" id="payment_status" placeholder="Payment Status">
+
+            <button onclick="createPayment()">Add Payment</button>
+        </div>
+
+        <hr>
+
+        <!-- TABLE -->
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>Payment ID</th>
+                    <th>Order ID</th>
+                    <th>Amount</th>
+                    <th>Payment Date</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="paymentTable"></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const API_URL = "http://localhost:8000/api/payments";
+
+
+// 📥 READ
+function loadPayments() {
+    fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+            let rows = "";
+
+            data.forEach(payment => {
+                rows += `
+                <tr>
+                    <td>${payment.payment_id}</td>
+                    <td>${payment.order_id}</td>
+                    <td>${payment.amount}</td>
+                    <td>${payment.payment_date}</td>
+                    <td>${payment.payment_method}</td>
+                    <td>${payment.payment_status}</td>
+                    <td>
+                        <button onclick="deletePayment(${payment.payment_id})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            document.getElementById("paymentTable").innerHTML = rows;
+        });
+}
+
+
+// ➕ CREATE
+function createPayment() {
+    fetch(API_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            order_id: document.getElementById("order_id").value,
+            amount: document.getElementById("amount").value,
+            payment_date: document.getElementById("payment_date").value,
+            payment_method: document.getElementById("payment_method").value,
+            payment_status: document.getElementById("payment_status").value
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        loadPayments();
+    });
+}
+
+
+// ❌ DELETE
+function deletePayment(id) {
+    fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    })
+    .then(() => {
+        loadPayments();
+    });
+}
+
+
+// AUTO LOAD
+loadPayments();
+
+</script>
+
+</body>
+</html>

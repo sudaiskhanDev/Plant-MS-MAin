@@ -6,20 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
+            $table->id('notification_id');
+
+            $table->unsignedBigInteger('admin_staff_id');
+
+            $table->text('message');
+            $table->string('type'); // stock / maintenance / order
+            $table->date('date');
+
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('notifications');

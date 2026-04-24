@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+    <title>Admin Dashboard - Suppliers</title>
+</head>
+<body>
+
+<div class="main-admin-dashboard">
+
+    <!-- SIDEBAR -->
+    <div class="side-bar">
+        <h1>Admin Dashboard</h1>
+
+        <div class="pages-links">
+            <ul>
+                <a href="#">Categories</a>
+                <a href="#" onclick="loadSuppliers()">Suppliers</a>
+            </ul>
+        </div>
+    </div>
+
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-content">
+
+        <h2>Supplier Management</h2>
+
+        <!-- CREATE FORM -->
+        <div>
+            <h3>Add Supplier</h3>
+
+            <input type="text" id="name" placeholder="Supplier Name">
+            <input type="text" id="contact" placeholder="Contact">
+            <input type="text" id="address" placeholder="Address">
+
+            <button onclick="createSupplier()">Add Supplier</button>
+        </div>
+
+        <hr>
+
+        <!-- TABLE -->
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="supplierTable"></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const API_URL = "http://localhost:8000/api/suppliers";
+
+// 📥 READ
+function loadSuppliers() {
+    fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+            let rows = "";
+
+            data.forEach(supplier => {
+                rows += `
+                <tr>
+                    <td>${supplier.supplier_id}</td>
+                    <td>${supplier.name}</td>
+                    <td>${supplier.contact}</td>
+                    <td>${supplier.address}</td>
+                    <td>
+                        <button onclick="editSupplier(${supplier.supplier_id}, '${supplier.name}', '${supplier.contact}', '${supplier.address}')">Edit</button>
+                        <button onclick="deleteSupplier(${supplier.supplier_id})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            document.getElementById("supplierTable").innerHTML = rows;
+        });
+}
+
+
+// ➕ CREATE / UPDATE SWITCH
+let editMode = false;
+let editId = null;
+
+function createSupplier() {
+
+    let data = {
+        name: document.getElementById("name").value,
+        contact: document.getElementById("contact").value,
+        address: document.getElementById("address").value
+    };
+
+    if (editMode) {
+        // ✏️ UPDATE
+        fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(() => {
+            editMode = false;
+            editId = null;
+            clearForm();
+            loadSuppliers();
+        });
+
+    } else {
+        // ➕ CREATE
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(() => {
+            clearForm();
+            loadSuppliers();
+        });
+    }
+}
+
+
+// ✏️ EDIT
+function editSupplier(id, name, contact, address) {
+    document.getElementById("name").value = name;
+    document.getElementById("contact").value = contact;
+    document.getElementById("address").value = address;
+
+    editMode = true;
+    editId = id;
+}
+
+
+// ❌ DELETE
+function deleteSupplier(id) {
+    fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    })
+    .then(() => {
+        loadSuppliers();
+    });
+}
+
+
+// 🧹 CLEAR FORM
+function clearForm() {
+    document.getElementById("name").value = "";
+    document.getElementById("contact").value = "";
+    document.getElementById("address").value = "";
+}
+
+
+// AUTO LOAD
+loadSuppliers();
+
+</script>
+
+</body>
+</html>

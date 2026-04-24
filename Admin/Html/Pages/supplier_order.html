@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+    <title>Admin Dashboard - Supplier Orders</title>
+</head>
+<body>
+
+<div class="main-admin-dashboard">
+
+    <!-- SIDEBAR -->
+    <div class="side-bar">
+        <h1>Admin Dashboard</h1>
+
+        <div class="pages-links">
+            <ul>
+                <a href="#">Categories</a>
+                <a href="#" onclick="loadSupplierOrders()">Supplier Orders</a>
+            </ul>
+        </div>
+    </div>
+
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-content">
+
+        <h2>Supplier Order Management</h2>
+
+        <!-- CREATE / UPDATE FORM -->
+        <div>
+            <h3>Add / Update Supplier Order</h3>
+
+            <input type="number" id="supplier_id" placeholder="Supplier ID">
+            <input type="number" id="plant_id" placeholder="Plant ID">
+            <input type="number" id="quantity" placeholder="Quantity">
+            <input type="text" id="delivery_status" placeholder="Delivery Status">
+
+            <button onclick="saveSupplierOrder()">Save</button>
+        </div>
+
+        <hr>
+
+        <!-- TABLE -->
+        <table border="1" width="100%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Supplier ID</th>
+                    <th>Plant ID</th>
+                    <th>Quantity</th>
+                    <th>Delivery Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="supplierOrderTable"></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const API_URL = "http://localhost:8000/api/supplier-orders";
+
+let editMode = false;
+let editId = null;
+
+
+// 📥 READ
+function loadSupplierOrders() {
+    fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+            let rows = "";
+
+            data.forEach(order => {
+                rows += `
+                <tr>
+                    <td>${order.supplier_order_id}</td>
+                    <td>${order.supplier_id}</td>
+                    <td>${order.plant_id}</td>
+                    <td>${order.quantity}</td>
+                    <td>${order.delivery_status}</td>
+                    <td>
+                        <button onclick="editSupplierOrder(${order.supplier_order_id}, ${order.supplier_id}, ${order.plant_id}, ${order.quantity}, '${order.delivery_status}')">Edit</button>
+                        <button onclick="deleteSupplierOrder(${order.supplier_order_id})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            document.getElementById("supplierOrderTable").innerHTML = rows;
+        });
+}
+
+
+// ➕ ➕ CREATE / ✏️ UPDATE
+function saveSupplierOrder() {
+
+    let data = {
+        supplier_id: document.getElementById("supplier_id").value,
+        plant_id: document.getElementById("plant_id").value,
+        quantity: document.getElementById("quantity").value,
+        delivery_status: document.getElementById("delivery_status").value
+    };
+
+    if (editMode) {
+
+        // ✏️ UPDATE
+        fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(() => {
+            editMode = false;
+            editId = null;
+            clearForm();
+            loadSupplierOrders();
+        });
+
+    } else {
+
+        // ➕ CREATE
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(() => {
+            clearForm();
+            loadSupplierOrders();
+        });
+    }
+}
+
+
+// ✏️ EDIT
+function editSupplierOrder(id, supplier_id, plant_id, quantity, delivery_status) {
+    document.getElementById("supplier_id").value = supplier_id;
+    document.getElementById("plant_id").value = plant_id;
+    document.getElementById("quantity").value = quantity;
+    document.getElementById("delivery_status").value = delivery_status;
+
+    editMode = true;
+    editId = id;
+}
+
+
+// ❌ DELETE
+function deleteSupplierOrder(id) {
+    fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    })
+    .then(() => {
+        loadSupplierOrders();
+    });
+}
+
+
+// 🧹 CLEAR FORM
+function clearForm() {
+    document.getElementById("supplier_id").value = "";
+    document.getElementById("plant_id").value = "";
+    document.getElementById("quantity").value = "";
+    document.getElementById("delivery_status").value = "";
+}
+
+
+// AUTO LOAD
+loadSupplierOrders();
+
+</script>
+
+</body>
+</html>
