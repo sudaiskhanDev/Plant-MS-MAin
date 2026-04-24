@@ -27,16 +27,16 @@
 
         <h2>Order Management</h2>
 
-        <!-- CREATE ORDER -->
+        <!-- CREATE / UPDATE ORDER -->
         <div>
-            <h3>Create Order</h3>
+            <h3>Add / Update Order</h3>
 
-            <input type="date" id="order_date" placeholder="Order Date">
+            <input type="date" id="order_date">
             <input type="number" id="total_amount" placeholder="Total Amount">
             <input type="text" id="status" placeholder="Status">
             <input type="number" id="user_id" placeholder="User ID">
 
-            <button onclick="createOrder()">Add Order</button>
+            <button onclick="saveOrder()">Save Order</button>
         </div>
 
         <hr>
@@ -64,6 +64,9 @@
 
 const API_URL = "http://localhost:8000/api/orders";
 
+let editMode = false;
+let editId = null;
+
 
 // 📥 READ ALL ORDERS
 function loadOrders() {
@@ -81,6 +84,7 @@ function loadOrders() {
                     <td>${order.status}</td>
                     <td>${order.user_id}</td>
                     <td>
+                        <button onclick="editOrder(${order.order_id}, '${order.order_date}', ${order.total_amount}, '${order.status}', ${order.user_id})">Edit</button>
                         <button onclick="deleteOrder(${order.order_id})">Delete</button>
                     </td>
                 </tr>`;
@@ -91,28 +95,60 @@ function loadOrders() {
 }
 
 
-// ➕ CREATE ORDER
-function createOrder() {
-    fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            order_date: document.getElementById("order_date").value,
-            total_amount: document.getElementById("total_amount").value,
-            status: document.getElementById("status").value,
-            user_id: document.getElementById("user_id").value
+// ➕ ➕ CREATE / ✏️ UPDATE
+function saveOrder() {
+
+    let data = {
+        order_date: document.getElementById("order_date").value,
+        total_amount: document.getElementById("total_amount").value,
+        status: document.getElementById("status").value,
+        user_id: document.getElementById("user_id").value
+    };
+
+    if (editMode) {
+        // ✏️ UPDATE
+        fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
         })
-    })
-    .then(res => res.json())
-    .then(() => {
-        loadOrders();
-    });
+        .then(() => {
+            resetForm();
+            loadOrders();
+        });
+
+    } else {
+        // ➕ CREATE
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            resetForm();
+            loadOrders();
+        });
+    }
 }
 
 
-// ❌ DELETE ORDER
+// ✏️ EDIT (FORM FILL)
+function editOrder(id, date, amount, status, user_id) {
+    document.getElementById("order_date").value = date;
+    document.getElementById("total_amount").value = amount;
+    document.getElementById("status").value = status;
+    document.getElementById("user_id").value = user_id;
+
+    editMode = true;
+    editId = id;
+}
+
+
+// ❌ DELETE
 function deleteOrder(id) {
     fetch(`${API_URL}/${id}`, {
         method: "DELETE"
@@ -120,6 +156,18 @@ function deleteOrder(id) {
     .then(() => {
         loadOrders();
     });
+}
+
+
+// 🔄 RESET FORM
+function resetForm() {
+    document.getElementById("order_date").value = "";
+    document.getElementById("total_amount").value = "";
+    document.getElementById("status").value = "";
+    document.getElementById("user_id").value = "";
+
+    editMode = false;
+    editId = null;
 }
 
 

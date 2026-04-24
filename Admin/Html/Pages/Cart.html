@@ -27,15 +27,15 @@
 
         <h2>Cart Management</h2>
 
-        <!-- CREATE FORM -->
+        <!-- FORM -->
         <div>
-            <h3>Add Cart</h3>
+            <h3>Add / Update Cart</h3>
 
             <input type="number" id="user_id" placeholder="User ID">
             <input type="number" id="plant_id" placeholder="Plant ID">
             <input type="number" id="quantity" placeholder="Quantity">
 
-            <button onclick="createCart()">Add</button>
+            <button onclick="saveCart()">Save</button>
         </div>
 
         <hr>
@@ -59,9 +59,14 @@
 </div>
 
 <script>
+
 const API_URL = "http://localhost:8000/api/carts";
 
-// 🔄 READ (GET ALL)
+let editMode = false;
+let editId = null;
+
+
+// 📥 READ
 function loadCarts() {
     fetch(API_URL)
         .then(res => res.json())
@@ -76,6 +81,7 @@ function loadCarts() {
                     <td>${cart.plant_id}</td>
                     <td>${cart.quantity}</td>
                     <td>
+                        <button onclick="editCart(${cart.cart_id}, ${cart.user_id}, ${cart.plant_id}, ${cart.quantity})">Edit</button>
                         <button onclick="deleteCart(${cart.cart_id})">Delete</button>
                     </td>
                 </tr>`;
@@ -85,24 +91,61 @@ function loadCarts() {
         });
 }
 
-// ➕ CREATE
-function createCart() {
-    fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            user_id: document.getElementById("user_id").value,
-            plant_id: document.getElementById("plant_id").value,
-            quantity: document.getElementById("quantity").value
+
+// ➕ CREATE / ✏️ UPDATE
+function saveCart() {
+
+    let data = {
+        user_id: document.getElementById("user_id").value,
+        plant_id: document.getElementById("plant_id").value,
+        quantity: document.getElementById("quantity").value
+    };
+
+    if (editMode) {
+
+        // ✏️ UPDATE
+        fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
         })
-    })
-    .then(res => res.json())
-    .then(() => {
-        loadCarts();
-    });
+        .then(() => {
+            editMode = false;
+            editId = null;
+            clearForm();
+            loadCarts();
+        });
+
+    } else {
+
+        // ➕ CREATE
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            clearForm();
+            loadCarts();
+        });
+    }
 }
+
+
+// ✏️ EDIT (Prefill Form)
+function editCart(id, user_id, plant_id, quantity) {
+    document.getElementById("user_id").value = user_id;
+    document.getElementById("plant_id").value = plant_id;
+    document.getElementById("quantity").value = quantity;
+
+    editMode = true;
+    editId = id;
+}
+
 
 // ❌ DELETE
 function deleteCart(id) {
@@ -114,8 +157,18 @@ function deleteCart(id) {
     });
 }
 
+
+// 🧹 CLEAR FORM
+function clearForm() {
+    document.getElementById("user_id").value = "";
+    document.getElementById("plant_id").value = "";
+    document.getElementById("quantity").value = "";
+}
+
+
 // AUTO LOAD
 loadCarts();
+
 </script>
 
 </body>

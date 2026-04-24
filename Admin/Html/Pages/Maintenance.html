@@ -27,16 +27,16 @@
 
         <h2>Maintenance Management</h2>
 
-        <!-- CREATE FORM -->
+        <!-- FORM -->
         <div>
-            <h3>Add Maintenance Task</h3>
+            <h3>Add / Update Maintenance Task</h3>
 
             <input type="number" id="plant_id" placeholder="Plant ID">
             <input type="text" id="task_type" placeholder="Task Type (watering/pruning/fertilization)">
             <input type="date" id="scheduled_date">
             <input type="text" id="status" placeholder="Status">
 
-            <button onclick="createMaintenance()">Add</button>
+            <button onclick="saveMaintenance()">Save</button>
         </div>
 
         <hr>
@@ -64,6 +64,9 @@
 
 const API_URL = "http://localhost:8000/api/maintenances";
 
+let editMode = false;
+let editId = null;
+
 
 // 📥 READ
 function loadMaintenance() {
@@ -81,6 +84,7 @@ function loadMaintenance() {
                     <td>${item.scheduled_date}</td>
                     <td>${item.status}</td>
                     <td>
+                        <button onclick="editMaintenance(${item.maintenance_id}, ${item.plant_id}, '${item.task_type}', '${item.scheduled_date}', '${item.status}')">Edit</button>
                         <button onclick="deleteMaintenance(${item.maintenance_id})">Delete</button>
                     </td>
                 </tr>`;
@@ -91,24 +95,63 @@ function loadMaintenance() {
 }
 
 
-// ➕ CREATE
-function createMaintenance() {
-    fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            plant_id: document.getElementById("plant_id").value,
-            task_type: document.getElementById("task_type").value,
-            scheduled_date: document.getElementById("scheduled_date").value,
-            status: document.getElementById("status").value
+// ➕ ➕ CREATE / ✏️ UPDATE
+function saveMaintenance() {
+
+    let data = {
+        plant_id: document.getElementById("plant_id").value,
+        task_type: document.getElementById("task_type").value,
+        scheduled_date: document.getElementById("scheduled_date").value,
+        status: document.getElementById("status").value
+    };
+
+    if (editMode) {
+
+        // ✏️ UPDATE
+        fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
         })
-    })
-    .then(res => res.json())
-    .then(() => {
-        loadMaintenance();
-    });
+        .then(res => res.json())
+        .then(() => {
+            editMode = false;
+            editId = null;
+            clearForm();
+            loadMaintenance();
+        });
+
+    } else {
+
+        // ➕ CREATE
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(() => {
+            clearForm();
+            loadMaintenance();
+        });
+    }
+}
+
+
+// ✏️ EDIT
+function editMaintenance(id, plant_id, task_type, scheduled_date, status) {
+
+    document.getElementById("plant_id").value = plant_id;
+    document.getElementById("task_type").value = task_type;
+    document.getElementById("scheduled_date").value = scheduled_date;
+    document.getElementById("status").value = status;
+
+    editMode = true;
+    editId = id;
 }
 
 
@@ -120,6 +163,15 @@ function deleteMaintenance(id) {
     .then(() => {
         loadMaintenance();
     });
+}
+
+
+// 🧹 CLEAR FORM
+function clearForm() {
+    document.getElementById("plant_id").value = "";
+    document.getElementById("task_type").value = "";
+    document.getElementById("scheduled_date").value = "";
+    document.getElementById("status").value = "";
 }
 
 

@@ -27,9 +27,9 @@
 
         <h2>Payment Management</h2>
 
-        <!-- CREATE FORM -->
+        <!-- FORM -->
         <div>
-            <h3>Add Payment</h3>
+            <h3>Add / Update Payment</h3>
 
             <input type="number" id="order_id" placeholder="Order ID">
             <input type="number" id="amount" placeholder="Amount">
@@ -37,7 +37,7 @@
             <input type="text" id="payment_method" placeholder="Payment Method">
             <input type="text" id="payment_status" placeholder="Payment Status">
 
-            <button onclick="createPayment()">Add Payment</button>
+            <button onclick="savePayment()">Save</button>
         </div>
 
         <hr>
@@ -66,6 +66,9 @@
 
 const API_URL = "http://localhost:8000/api/payments";
 
+let editMode = false;
+let editId = null;
+
 
 // 📥 READ
 function loadPayments() {
@@ -84,6 +87,7 @@ function loadPayments() {
                     <td>${payment.payment_method}</td>
                     <td>${payment.payment_status}</td>
                     <td>
+                        <button onclick="editPayment(${payment.payment_id}, ${payment.order_id}, ${payment.amount}, '${payment.payment_date}', '${payment.payment_method}', '${payment.payment_status}')">Edit</button>
                         <button onclick="deletePayment(${payment.payment_id})">Delete</button>
                     </td>
                 </tr>`;
@@ -94,25 +98,61 @@ function loadPayments() {
 }
 
 
-// ➕ CREATE
-function createPayment() {
-    fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            order_id: document.getElementById("order_id").value,
-            amount: document.getElementById("amount").value,
-            payment_date: document.getElementById("payment_date").value,
-            payment_method: document.getElementById("payment_method").value,
-            payment_status: document.getElementById("payment_status").value
+// ➕ CREATE / ✏️ UPDATE
+function savePayment() {
+
+    let data = {
+        order_id: document.getElementById("order_id").value,
+        amount: document.getElementById("amount").value,
+        payment_date: document.getElementById("payment_date").value,
+        payment_method: document.getElementById("payment_method").value,
+        payment_status: document.getElementById("payment_status").value
+    };
+
+    if (editMode) {
+        // ✏️ UPDATE
+        fetch(`${API_URL}/${editId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
         })
-    })
-    .then(res => res.json())
-    .then(() => {
-        loadPayments();
-    });
+        .then(() => {
+            editMode = false;
+            editId = null;
+            clearForm();
+            loadPayments();
+        });
+
+    } else {
+        // ➕ CREATE
+        fetch(API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            clearForm();
+            loadPayments();
+        });
+    }
+}
+
+
+// ✏️ EDIT
+function editPayment(id, order_id, amount, payment_date, payment_method, payment_status) {
+
+    document.getElementById("order_id").value = order_id;
+    document.getElementById("amount").value = amount;
+    document.getElementById("payment_date").value = payment_date;
+    document.getElementById("payment_method").value = payment_method;
+    document.getElementById("payment_status").value = payment_status;
+
+    editMode = true;
+    editId = id;
 }
 
 
@@ -124,6 +164,16 @@ function deletePayment(id) {
     .then(() => {
         loadPayments();
     });
+}
+
+
+// 🧹 CLEAR FORM
+function clearForm() {
+    document.getElementById("order_id").value = "";
+    document.getElementById("amount").value = "";
+    document.getElementById("payment_date").value = "";
+    document.getElementById("payment_method").value = "";
+    document.getElementById("payment_status").value = "";
 }
 
 
