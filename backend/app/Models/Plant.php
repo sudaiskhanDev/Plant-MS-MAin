@@ -29,4 +29,28 @@ class Plant extends Model
 {
     return $this->hasMany(OrderDetail::class, 'plant_id');
 }
+// public function category()
+// {
+//     return $this->belongsTo(Category::class, 'category_id', 'category_id');
+// }
+
+public function carts()
+{
+    return $this->hasMany(Cart::class, 'plant_id', 'plant_id');
+}
+
+// public function orderDetails()
+// {
+//     return $this->hasMany(OrderDetail::class, 'plant_id', 'plant_id');
+// }
+
+public function maintenances()
+{
+    return $this->hasMany(Maintenance::class, 'plant_id', 'plant_id');
+}
+
+public function supplierOrders()
+{
+    return $this->hasMany(SupplierOrder::class, 'plant_id', 'plant_id');
+}
 }

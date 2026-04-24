@@ -8,69 +8,50 @@ use App\Models\OrderDetail;
 
 class OrderDetailController extends Controller
 {
-     use App\Models\OrderDetail;
-
-public function store()
-{
-    $userId = auth('user_api')->id();
-
-    $cartItems = Cart::where('user_id', $userId)->get();
-
-    if ($cartItems->isEmpty()) {
-        return response()->json(['message' => 'Cart is empty'], 400);
+    public function index()
+    {
+        return response()->json(OrderDetail::all());
     }
 
-    DB::beginTransaction();
-
-    try {
-        $total = 0;
-
-        foreach ($cartItems as $item) {
-            $plant = Plant::find($item->plant_id);
-
-            if ($plant->stock_quantity < $item->quantity) {
-                throw new \Exception("Stock not available for {$plant->name}");
-            }
-
-            $total += $plant->price * $item->quantity;
-        }
-
-        // 🧾 CREATE ORDER
-        $order = Order::create([
-            'user_id' => $userId,
-            'total_amount' => $total,
-            'status' => 'pending'
+    public function store(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required',
+            'plant_id' => 'required',
+            'quantity' => 'required|integer',
+            'price' => 'required'
         ]);
 
-        // 🔥 INSERT ORDER DETAILS + STOCK REDUCE
-        foreach ($cartItems as $item) {
-            $plant = Plant::find($item->plant_id);
+        $detail = OrderDetail::create($request->all());
 
-            OrderDetail::create([
-                'order_id' => $order->order_id,
-                'plant_id' => $plant->plant_id,
-                'quantity' => $item->quantity,
-                'price' => $plant->price
-            ]);
-
-            // 📉 reduce stock
-            $plant->stock_quantity -= $item->quantity;
-            $plant->save();
-        }
-
-        // 🧹 CLEAR CART
-        Cart::where('user_id', $userId)->delete();
-
-        DB::commit();
-
-        return response()->json([
-            'message' => 'Order placed successfully',
-            'order' => $order
-        ]);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json(['error' => $e->getMessage()], 500);
+        return response()->json($detail, 201);
     }
-}
+
+    public function show($id)
+    {
+        return response()->json(OrderDetail::findOrFail($id));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $detail = OrderDetail::findOrFail($id);
+
+        $request->validate([
+            'order_id' => 'required',
+            'plant_id' => 'required',
+            'quantity' => 'required|integer',
+            'price' => 'required'
+        ]);
+
+        $detail->update($request->all());
+
+        return response()->json($detail);
+    }
+
+    public function destroy($id)
+    {
+        OrderDetail::findOrFail($id)->delete();
+
+        return response()->json(['message' => 'Deleted']);
+    }
 }

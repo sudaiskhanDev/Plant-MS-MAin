@@ -3,60 +3,50 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Report;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Report;
 
 class ReportController extends Controller
 {
     public function index()
     {
-        return response()->json(
-            Report::latest()->get()
-        );
+        return response()->json(Report::all());
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'type' => 'required|string',
+        $request->validate([
+            'type' => 'required',
+            'generated_date' => 'required|date'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        $report = Report::create($request->all());
 
-        $report = Report::create([
-            'type' => $request->type,
-            'generated_date' => now(),
-        ]);
-
-        return response()->json([
-            'message' => 'Report created',
-            'data' => $report
-        ]);
+        return response()->json($report, 201);
     }
 
     public function show($id)
     {
-        $report = Report::find($id);
+        return response()->json(Report::findOrFail($id));
+    }
 
-        if (!$report) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
+    public function update(Request $request, $id)
+    {
+        $report = Report::findOrFail($id);
+
+        $request->validate([
+            'type' => 'required',
+            'generated_date' => 'required|date'
+        ]);
+
+        $report->update($request->all());
 
         return response()->json($report);
     }
 
     public function destroy($id)
     {
-        $report = Report::find($id);
-
-        if (!$report) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        $report->delete();
+        Report::findOrFail($id)->delete();
 
         return response()->json(['message' => 'Deleted']);
     }

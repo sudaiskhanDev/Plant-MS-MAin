@@ -3,76 +3,54 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\SupplierOrder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Models\SupplierOrder;
 
 class SupplierOrderController extends Controller
 {
     public function index()
     {
-        return response()->json(
-            SupplierOrder::with(['supplier', 'plant'])->latest()->get()
-        );
+        return response()->json(SupplierOrder::all());
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'supplier_id' => 'required|exists:suppliers,supplier_id',
-            'plant_id' => 'required|exists:plants,plant_id',
-            'quantity' => 'required|integer|min:1',
-            'delivery_status' => 'required|in:pending,delivered,cancelled',
+        $request->validate([
+            'supplier_id' => 'required',
+            'plant_id' => 'required',
+            'quantity' => 'required|integer',
+            'delivery_status' => 'required'
         ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
 
         $order = SupplierOrder::create($request->all());
 
-        return response()->json([
-            'message' => 'Supplier order created',
-            'data' => $order
-        ], 201);
+        return response()->json($order, 201);
     }
 
     public function show($id)
     {
-        $order = SupplierOrder::with(['supplier', 'plant'])->find($id);
-
-        if (!$order) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        return response()->json($order);
+        return response()->json(SupplierOrder::findOrFail($id));
     }
 
     public function update(Request $request, $id)
     {
-        $order = SupplierOrder::find($id);
+        $order = SupplierOrder::findOrFail($id);
 
-        if (!$order) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
+        $request->validate([
+            'supplier_id' => 'required',
+            'plant_id' => 'required',
+            'quantity' => 'required|integer',
+            'delivery_status' => 'required'
+        ]);
 
         $order->update($request->all());
 
-        return response()->json([
-            'message' => 'Updated',
-            'data' => $order
-        ]);
+        return response()->json($order);
     }
 
     public function destroy($id)
     {
-        $order = SupplierOrder::find($id);
-
-        if (!$order) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        $order->delete();
+        SupplierOrder::findOrFail($id)->delete();
 
         return response()->json(['message' => 'Deleted']);
     }

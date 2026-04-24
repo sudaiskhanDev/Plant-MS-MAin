@@ -14,13 +14,15 @@ class Cart extends Model
         'quantity'
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
 
-    public function plant()
-    {
-        return $this->belongsTo(Plant::class, 'plant_id');
-    }
+    //
+    public function user()
+{
+    return $this->belongsTo(User::class, 'user_id', 'user_id');
+}
+
+public function plant()
+{
+    return $this->belongsTo(Plant::class, 'plant_id', 'plant_id');
+}
 }

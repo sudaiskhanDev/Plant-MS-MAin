@@ -3,81 +3,56 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Payment;
-use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Payment;
 
 class PaymentController extends Controller
 {
     public function index()
     {
-        return response()->json(Payment::with('order')->get());
+        return response()->json(Payment::all());
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'order_id' => 'required|exists:orders,order_id',
-            'amount' => 'required|numeric',
-            'payment_method' => 'required|string',
-            'payment_status' => 'required|string',
+        $request->validate([
+            'order_id' => 'required',
+            'amount' => 'required',
+            'payment_date' => 'required|date',
+            'payment_method' => 'required',
+            'payment_status' => 'required'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        $payment = Payment::create($request->all());
 
-        $payment = Payment::create([
-            'order_id' => $request->order_id,
-            'amount' => $request->amount,
-            'payment_date' => now(),
-            'payment_method' => $request->payment_method,
-            'payment_status' => $request->payment_status,
-        ]);
-
-        return response()->json([
-            'message' => 'Payment created',
-            'data' => $payment
-        ], 201);
+        return response()->json($payment, 201);
     }
 
     public function show($id)
     {
-        $payment = Payment::with('order')->find($id);
-
-        if (!$payment) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        return response()->json($payment);
+        return response()->json(Payment::findOrFail($id));
     }
 
     public function update(Request $request, $id)
     {
-        $payment = Payment::find($id);
+        $payment = Payment::findOrFail($id);
 
-        if (!$payment) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
+        $request->validate([
+            'order_id' => 'required',
+            'amount' => 'required',
+            'payment_date' => 'required|date',
+            'payment_method' => 'required',
+            'payment_status' => 'required'
+        ]);
 
         $payment->update($request->all());
 
-        return response()->json([
-            'message' => 'Updated',
-            'data' => $payment
-        ]);
+        return response()->json($payment);
     }
 
     public function destroy($id)
     {
-        $payment = Payment::find($id);
-
-        if (!$payment) {
-            return response()->json(['message' => 'Not found'], 404);
-        }
-
-        $payment->delete();
+        Payment::findOrFail($id)->delete();
 
         return response()->json(['message' => 'Deleted']);
     }

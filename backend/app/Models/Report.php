@@ -10,6 +10,6 @@ class Report extends Model
 
     protected $fillable = [
         'type',
-        'generated_date',
+        'generated_date'
     ];
 }

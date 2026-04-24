@@ -12,11 +12,12 @@ class Notification extends Model
         'admin_staff_id',
         'message',
         'type',
-        'date',
+        'date'
     ];
 
+
     public function adminStaff()
-    {
-        return $this->belongsTo(AdminStaff::class, 'admin_staff_id', 'admin_staff_id');
-    }
+{
+    return $this->belongsTo(AdminStaff::class, 'admin_staff_id', 'admin_staff_id');
+}
 }

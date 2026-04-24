@@ -13,11 +13,12 @@ class Payment extends Model
         'amount',
         'payment_date',
         'payment_method',
-        'payment_status',
+        'payment_status'
     ];
 
+
     public function order()
-    {
-        return $this->belongsTo(Order::class, 'order_id', 'order_id');
-    }
+{
+    return $this->belongsTo(Order::class, 'order_id', 'order_id');
+}
 }

@@ -15,13 +15,14 @@ class OrderDetail extends Model
         'price'
     ];
 
-    public function order()
-    {
-        return $this->belongsTo(Order::class, 'order_id');
-    }
 
-    public function plant()
-    {
-        return $this->belongsTo(Plant::class, 'plant_id');
-    }
+    public function order()
+{
+    return $this->belongsTo(Order::class, 'order_id', 'order_id');
+}
+
+public function plant()
+{
+    return $this->belongsTo(Plant::class, 'plant_id', 'plant_id');
+}
 }

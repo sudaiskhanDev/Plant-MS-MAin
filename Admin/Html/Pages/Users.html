@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+</head>
+<body>
+
+<div class="main-admin-dashboard">
+
+    <!-- Sidebar -->
+    <div class="side-bar">
+        <h1>Admin Dashboard</h1>
+
+        <div class="pages-links">
+            <ul>
+                <li><a href="#" onclick="showRegister()">Register User</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="dashboard-content" id="dashboard-content">
+
+        <h2>Welcome Admin</h2>
+
+    </div>
+
+</div>
+
+<script>
+function showRegister() {
+    document.getElementById("dashboard-content").innerHTML = `
+        <h2>Register User</h2>
+
+        <input type="text" id="name" placeholder="Name"><br><br>
+        <input type="email" id="email" placeholder="Email"><br><br>
+        <input type="password" id="password" placeholder="Password"><br><br>
+
+        <button onclick="registerUser()">Register</button>
+
+        <p id="msg"></p>
+    `;
+}
+
+async function registerUser() {
+
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    let response = await fetch("http://127.0.0.1:8000/api/user/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password
+        })
+    });
+
+    let data = await response.json();
+
+    if (response.ok) {
+        document.getElementById("msg").innerText = "User Registered Successfully!";
+    } else {
+        document.getElementById("msg").innerText = "Error: " + JSON.stringify(data);
+    }
+
+    console.log(data);
+}
+</script>
+
+</body>
+</html>
