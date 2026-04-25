@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checkout</title>
 
+<script src="https://js.stripe.com/v3/"></script>
+
 <style>
 body {
     font-family: Arial;
@@ -13,21 +15,32 @@ body {
 }
 
 .container {
-    max-width: 600px;
+    max-width: 650px;
     margin: auto;
     background: white;
     padding: 20px;
     border-radius: 10px;
 }
 
-h2 {
-    text-align: center;
+h2 { text-align: center; }
+
+.box {
+    background: #fafafa;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
 }
 
 input, select {
     width: 100%;
     padding: 10px;
-    margin: 8px 0;
+    margin: 6px 0;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
@@ -38,31 +51,22 @@ button {
     background: #1b3022;
     color: white;
     border: none;
-    border-radius: 6px;
-    cursor: pointer;
     margin-top: 10px;
+    cursor: pointer;
+    border-radius: 6px;
 }
 
-button:hover {
-    background: #344e41;
-}
+button:hover { background: #344e41; }
 
-.cart-box {
-    background: #fafafa;
+#card-element {
     padding: 10px;
-    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    margin-top: 8px;
     border-radius: 5px;
 }
 
-.item {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
-}
-
-.total {
-    font-weight: bold;
-    text-align: right;
+.error {
+    color: red;
     margin-top: 10px;
 }
 </style>
@@ -74,18 +78,18 @@ button:hover {
 
 <h2>Checkout</h2>
 
-<!-- CART PREVIEW -->
-<div id="cartContainer" class="cart-box">
-    Loading cart...
+<div class="box">
+    <h3>Cart Items</h3>
+    <div id="cartContainer">Loading...</div>
+    <h3 id="totalBox"></h3>
 </div>
 
-<div id="totalBox" class="total"></div>
+<div class="box">
 
-<!-- USER INFO -->
 <input type="text" id="name" placeholder="Full Name">
 <input type="text" id="phone" placeholder="Phone">
 <input type="text" id="city" placeholder="City">
-<input type="text" id="zip" placeholder="Zip (optional)">
+<input type="text" id="zip" placeholder="Zip">
 <input type="text" id="address" placeholder="Shipping Address">
 
 <select id="payment_method">
@@ -93,64 +97,105 @@ button:hover {
     <option value="card">Card (Stripe)</option>
 </select>
 
+<div id="card-container" style="display:none;">
+    <div id="card-element"></div>
+</div>
+
+<div id="errorBox" class="error"></div>
+
 <button onclick="placeOrder()">Place Order</button>
 
 </div>
 
-<script>
+</div>
 
+<script>
 const API = "http://127.0.0.1:8000/api";
 const CART_API = `${API}/carts`;
 const CHECKOUT_API = `${API}/checkout`;
+const STRIPE_API = `${API}/payments/create-payment-intent`;
 
 const token = localStorage.getItem("token");
+
+// Stripe init
+const stripe = Stripe("pk_test_51T3YGjPubxVvHrmFHvOK8ut1lXw8X7nL77iYk0Y47aj4G6758ndZDGRnWu54qEuv2mk3feOfbRNTKZmwRe9A8Cbx00VNTxBm5d");
+
+const elements = stripe.elements();
+const card = elements.create("card");
 
 let cartItems = [];
 let totalAmount = 0;
 
-// ---------------- LOAD CART ----------------
+// ================= CART LOAD =================
 async function loadCart() {
 
-    let res = await fetch(CART_API, {
-        headers: {
-            "Authorization": "Bearer " + token
-        }
-    });
-
-    let data = await res.json();
-    cartItems = data;
-
-    let container = document.getElementById("cartContainer");
-    container.innerHTML = "";
-    totalAmount = 0;
-
-    if (cartItems.length === 0) {
-        container.innerHTML = "Cart is empty";
+    if (!token) {
+        document.getElementById("cartContainer").innerHTML = "Login required";
         return;
     }
 
-    cartItems.forEach(item => {
+    try {
+        let res = await fetch(CART_API, {
+            headers: { "Authorization": "Bearer " + token }
+        });
 
-        let price = item.plant.price * item.quantity;
-        totalAmount += price;
+        let data = await res.json();
 
-        container.innerHTML += `
-            <div class="item">
-                <span>${item.plant.name} x ${item.quantity}</span>
-                <span>$${price}</span>
-            </div>
-        `;
-    });
+        cartItems = data.data || data;
 
-    document.getElementById("totalBox").innerHTML =
-        "Total: $" + totalAmount;
+        let container = document.getElementById("cartContainer");
+        container.innerHTML = "";
+        totalAmount = 0;
+
+        if (!cartItems.length) {
+            container.innerHTML = "Cart is empty";
+            return;
+        }
+
+        cartItems.forEach(item => {
+            let price = item.plant.price * item.quantity;
+            totalAmount += price;
+
+            container.innerHTML += `
+                <div class="cart-item">
+                    <span>${item.plant.name} x ${item.quantity}</span>
+                    <span>$${price}</span>
+                </div>
+            `;
+        });
+
+        document.getElementById("totalBox").innerText =
+            "Total: $" + totalAmount.toFixed(2);
+
+    } catch (err) {
+        console.log(err);
+        document.getElementById("cartContainer").innerText = "Error loading cart";
+    }
 }
 
-// ---------------- PLACE ORDER ----------------
+// ================= PAYMENT TOGGLE =================
+let cardMounted = false;
+
+document.getElementById("payment_method").addEventListener("change", function () {
+    if (this.value === "card") {
+        document.getElementById("card-container").style.display = "block";
+
+        if (!cardMounted) {
+            card.mount("#card-element");
+            cardMounted = true;
+        }
+    } else {
+        document.getElementById("card-container").style.display = "none";
+    }
+});
+
+// ================= PLACE ORDER =================
 async function placeOrder() {
 
-    if (cartItems.length === 0) {
-        alert("Cart is empty");
+    document.getElementById("errorBox").innerText = "";
+
+    if (!cartItems.length) {
+        document.getElementById("errorBox").innerText = "Cart is empty";
         return;
     }
 
@@ -160,30 +205,101 @@ async function placeOrder() {
         city: document.getElementById("city").value,
         zip: document.getElementById("zip").value,
         shipping_address: document.getElementById("address").value,
-        payment_method: document.getElementById("payment_method").value
+        payment_method: document.getElementById("payment_method").value,
+        payment_id: null
     };
 
-    let res = await fetch(CHECKOUT_API, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify(payload)
-    });
+    try {
 
-    let result = await res.json();
+        // ================= STRIPE =================
+        if (payload.payment_method === "card") {
 
-    if (res.ok) {
+            const { error, paymentMethod } = await stripe.createPaymentMethod({
+                type: "card",
+                card: card,
+            });
+
+            if (error) {
+                document.getElementById("errorBox").innerText = error.message;
+                return;
+            }
+
+            const intentRes = await fetch(STRIPE_API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({ amount: totalAmount })
+            });
+
+            const intentText = await intentRes.text();
+
+            let intentData;
+            try {
+                intentData = JSON.parse(intentText);
+            } catch (e) {
+                document.getElementById("errorBox").innerText = intentText;
+                return;
+            }
+
+            if (!intentData.clientSecret) {
+                document.getElementById("errorBox").innerText = "Stripe failed";
+                return;
+            }
+
+            const { error: stripeError, paymentIntent } =
+                await stripe.confirmCardPayment(intentData.clientSecret, {
+                    payment_method: {
+                        card: card
+                    }
+                });
+
+            if (stripeError) {
+                document.getElementById("errorBox").innerText = stripeError.message;
+                return;
+            }
+
+            payload.payment_id = paymentIntent.id;
+        }
+
+        // ================= CHECKOUT =================
+        let res = await fetch(CHECKOUT_API, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify(payload)
+        });
+
+        let text = await res.text();
+
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            document.getElementById("errorBox").innerText = text;
+            return;
+        }
+
+        if (!res.ok) {
+            document.getElementById("errorBox").innerText =
+                data.message || "Checkout failed";
+            return;
+        }
+
         alert("Order placed successfully!");
         window.location.href = "thankyou.html";
-    } else {
-        alert(result.message || "Checkout failed");
+
+    } catch (err) {
+        console.log(err);
+        document.getElementById("errorBox").innerText = "Server error";
     }
 }
 
+// init
 loadCart();
-
 </script>
 
 </body>

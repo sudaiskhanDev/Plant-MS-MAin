@@ -9,24 +9,25 @@ class Order extends Model
     protected $primaryKey = 'order_id';
 
     protected $fillable = [
-        'user_id',
-        'order_date',
-        'status',
-        'total_amount',
-        'payment_method',
-
-        // shipping fields
-        'name',
-        'phone',
-        'city',
-        'zip',
-        'shipping_address',
-    ];
-
+    'user_id',
+    'order_date',
+    'status',
+    'total_amount',
+    'payment_method',
+    'name',
+    'phone',
+    'city',
+    'zip',
+    'shipping_address',
+];
     public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
-    }
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id', 'user_id');
+    // }
 
     public function orderDetails()
     {
