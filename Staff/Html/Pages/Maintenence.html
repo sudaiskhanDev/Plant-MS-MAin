@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Maintenance Dashboard</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f5f7f5;
+    padding: 20px;
+}
+
+h2 {
+    color: #2e7d32;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+th {
+    background: #2e7d32;
+    color: white;
+    padding: 12px;
+}
+
+td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+img {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* BUTTON */
+button {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1b5e20;
+}
+
+/* STATUS */
+select {
+    padding: 5px;
+}
+
+/* ERROR BOX */
+#error {
+    color: red;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Staff Maintenance Dashboard</h2>
+
+<div id="error"></div>
+
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Plant</th>
+    <th>Image</th>
+    <th>Task</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+</table>
+
+<script>
+
+const API = "http://127.0.0.1:8000/api";
+let staffId = 1;
+
+// ================= LOAD TASKS =================
+async function loadTasks() {
+
+    try {
+        let res = await fetch(`${API}/maintenances/staff?staff_id=${staffId}`);
+
+        if (!res.ok) {
+            throw new Error("API Error: " + res.status);
+        }
+
+        let data = await res.json();
+
+        let rows = "";
+
+        data.forEach(m => {
+
+            let img = m.plant?.image 
+                ? `http://127.0.0.1:8000/storage/${m.plant.image}`
+                : '';
+
+            rows += `
+            <tr>
+                <td>${m.maintenance_id}</td>
+                <td>${m.plant?.name || 'N/A'}</td>
+                <td>
+                    ${img ? `<img src="${img}">` : 'No Image'}
+                </td>
+                <td>${m.task_type}</td>
+                <td>${m.scheduled_date}</td>
+                <td>
+                    <select id="status-${m.maintenance_id}">
+                        <option value="pending" ${m.status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="in_progress" ${m.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                        <option value="completed" ${m.status === 'completed' ? 'selected' : ''}>Completed</option>
+                    </select>
+                </td>
+                <td>
+                    <button onclick="updateStatus(${m.maintenance_id})">Update</button>
+                </td>
+            </tr>
+            `;
+        });
+
+        document.getElementById("tableBody").innerHTML = rows;
+        document.getElementById("error").innerHTML = "";
+
+    } catch (err) {
+        document.getElementById("error").innerHTML = err.message;
+        console.error(err);
+    }
+}
+
+// ================= UPDATE STATUS =================
+async function updateStatus(id) {
+
+    let status = document.getElementById(`status-${id}`).value;
+
+    try {
+        let res = await fetch(`${API}/maintenances/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ status })
+        });
+
+        if (!res.ok) {
+            throw new Error("Update failed");
+        }
+
+        alert("Status Updated");
+        loadTasks();
+
+    } catch (err) {
+        alert(err.message);
+    }
+}
+
+// INIT
+loadTasks();
+
+</script>
+
+</body>
+</html>

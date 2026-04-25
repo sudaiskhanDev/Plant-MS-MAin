@@ -1,16 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
-    <title>Admin Dashboard - Maintenance</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+<title>Maintenance Management</title>
+
+ <style>
+    /* ==============================================
+   MAINTENANCE MANAGEMENT (sidebar untouched)
+   Fresh green theme, glassmorphism, responsive
+================================================= */
+
+/* ----- MAIN LAYOUT (content area only) ----- */
+.content {
+    flex: 1;
+    margin: 1rem 2rem 2rem 1rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 36px;
+    padding: 2rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    animation: fadeSlideUp 0.4s ease-out;
+    overflow-x: auto;
+}
+
+.content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin-bottom: 1.5rem;
+    border-left: 5px solid #6b8c42;
+    padding-left: 1rem;
+    display: inline-block;
+}
+
+/* ----- FORM SECTION (Create / Update) ----- */
+.content > div:first-of-type {
+    background: white;
+    border-radius: 28px;
+    padding: 1.6rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.content > div:first-of-type:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.content h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #1b5e20;
+    margin-bottom: 1.2rem;
+    border-left: 3px solid #6b8c42;
+    padding-left: 0.8rem;
+}
+
+/* Form controls layout (stack vertically on mobile, row on desktop) */
+.content select,
+.content input[type="date"],
+.content button {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.content select,
+.content input[type="date"] {
+    width: 100%;
+    max-width: 280px;
+    padding: 12px 16px;
+    margin: 0 0.8rem 0.8rem 0;
+    border: 1px solid #d0e2c0;
+    border-radius: 48px;
+    background: #fefef7;
+    font-size: 0.9rem;
+    color: #1e2f1e;
+    transition: all 0.2s;
+}
+
+.content select:focus,
+.content input[type="date"]:focus {
+    outline: none;
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+    background: white;
+}
+
+/* Save button */
+.content button {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    border: none;
+    color: white;
+    padding: 12px 32px;
+    border-radius: 48px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    margin-top: 0.2rem;
+}
+
+.content button:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ----- TABLE (modern, clean, responsive) ----- */
+.content table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.04);
+    margin-top: 1rem;
+}
+
+.content thead tr {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: white;
+}
+
+.content th {
+    padding: 14px 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.content td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #eef3e8;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #1f2a1f;
+}
+
+/* Row striping & hover */
+.content tbody tr:nth-child(even) {
+    background-color: #fafefa;
+}
+.content tbody tr:hover {
+    background: #f5fbf0;
+    transition: 0.2s;
+}
+
+/* Status badges (looks clean) */
+.content td:nth-child(6) {
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 40px;
+    background: #f0f2f0;
+    color: #2c3e2c;
+}
+
+/* Action buttons (Edit / Delete) */
+.content td:last-child {
+    white-space: nowrap;
+}
+.content td button {
+    padding: 5px 14px;
+    border: none;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0 4px;
+    font-family: inherit;
+}
+/* Edit button */
+.content td button:first-child {
+    background: #e6f4ea;
+    color: #2e7d32;
+}
+.content td button:first-child:hover {
+    background: #2e7d32;
+    color: white;
+    transform: translateY(-1px);
+}
+/* Delete button */
+.content td button:last-child {
+    background: #fee8e8;
+    color: #c62828;
+}
+.content td button:last-child:hover {
+    background: #c62828;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* ----- RESPONSIVE (mobile / tablet) ----- */
+@media (max-width: 850px) {
+    .content {
+        margin: 1rem;
+        padding: 1.2rem;
+    }
+    .content select,
+    .content input[type="date"],
+    .content button {
+        max-width: 100%;
+        width: 100%;
+        margin-right: 0;
+    }
+    .content > div:first-of-type {
+        padding: 1rem;
+    }
+    /* make table horizontally scrollable */
+    .content {
+        overflow-x: auto;
+    }
+    .content table {
+        min-width: 700px;
+    }
+}
+
+@media (max-width: 500px) {
+    .content h2 {
+        font-size: 1.5rem;
+    }
+    .content h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* ----- ANIMATION ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+ </style>
 </head>
+
 <body>
 
 <div class="main-admin-dashboard">
 
-    <!-- SIDEBAR -->
+<!-- SIDEBAR -->
+ <!-- SIDEBAR -->
     <div class="side-bar">
         <h1>Admin Dashboard</h1>
 
@@ -35,160 +278,184 @@
             </div>
     </div>
 
-    <!-- DASHBOARD CONTENT -->
-    <div class="dashboard-content">
 
-        <h2>Maintenance Management</h2>
+<!-- CONTENT -->
+<div class="content">
 
-        <!-- FORM -->
-        <div>
-            <h3>Add / Update Maintenance Task</h3>
+<h2>Maintenance Management</h2>
 
-            <input type="number" id="plant_id" placeholder="Plant ID">
-            <input type="text" id="task_type" placeholder="Task Type (watering/pruning/fertilization)">
-            <input type="date" id="scheduled_date">
-            <input type="text" id="status" placeholder="Status">
+<!-- FORM -->
+<div>
 
-            <button onclick="saveMaintenance()">Save</button>
-        </div>
+<h3>Create / Update Task</h3>
 
-        <hr>
+<select id="plant_id"></select>
 
-        <!-- TABLE -->
-        <table border="1" width="100%">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Plant ID</th>
-                    <th>Task Type</th>
-                    <th>Scheduled Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="maintenanceTable"></tbody>
-        </table>
+<select id="admin_staff_id"></select>
 
-    </div>
+<!-- TASK TYPE -->
+<select id="task_type">
+    <option value="">Select Task Type</option>
+    <option value="watering">Watering</option>
+    <option value="pruning">Pruning</option>
+    <option value="fertilization">Fertilization</option>
+    <option value="repotting">Repotting</option>
+</select>
 
+<input type="date" id="scheduled_date">
+
+<!-- STATUS -->
+<select id="status">
+    <option value="">Select Status</option>
+    <option value="pending">Pending</option>
+    <option value="in_progress">In Progress</option>
+    <option value="completed">Completed</option>
+</select>
+
+<button onclick="saveMaintenance()">Save</button>
+
+</div>
+
+<!-- TABLE -->
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Plant</th>
+    <th>Staff</th>
+    <th>Task</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+</table>
+
+</div>
 </div>
 
 <script>
 
-const API_URL = "http://localhost:8000/api/maintenances";
+const API = "http://127.0.0.1:8000/api";
 
-let editMode = false;
 let editId = null;
 
+// ================= LOAD DROPDOWNS =================
+async function loadPlants() {
+    let res = await fetch(`${API}/plants`);
+    let data = await res.json();
 
-// 📥 READ
-function loadMaintenance() {
-    fetch(API_URL)
-        .then(res => res.json())
-        .then(data => {
-            let rows = "";
+    let html = `<option value="">Select Plant</option>`;
+    data.forEach(p => {
+        html += `<option value="${p.plant_id}">${p.name}</option>`;
+    });
 
-            data.forEach(item => {
-                rows += `
-                <tr>
-                    <td>${item.maintenance_id}</td>
-                    <td>${item.plant_id}</td>
-                    <td>${item.task_type}</td>
-                    <td>${item.scheduled_date}</td>
-                    <td>${item.status}</td>
-                    <td>
-                        <button onclick="editMaintenance(${item.maintenance_id}, ${item.plant_id}, '${item.task_type}', '${item.scheduled_date}', '${item.status}')">Edit</button>
-                        <button onclick="deleteMaintenance(${item.maintenance_id})">Delete</button>
-                    </td>
-                </tr>`;
-            });
-
-            document.getElementById("maintenanceTable").innerHTML = rows;
-        });
+    document.getElementById("plant_id").innerHTML = html;
 }
 
+async function loadStaff() {
+    let res = await fetch(`${API}/admin-staff`);
+    let data = await res.json();
 
-// ➕ ➕ CREATE / ✏️ UPDATE
-function saveMaintenance() {
+    let html = `<option value="">Select Staff</option>`;
+    data.forEach(s => {
+        html += `<option value="${s.admin_staff_id}">${s.name}</option>`;
+    });
 
-    let data = {
+    document.getElementById("admin_staff_id").innerHTML = html;
+}
+
+// ================= LOAD TABLE =================
+async function loadMaintenance() {
+
+    let res = await fetch(`${API}/maintenances`);
+    let data = await res.json();
+
+    let rows = "";
+
+    data.forEach(m => {
+        rows += `
+        <tr>
+            <td>${m.maintenance_id}</td>
+            <td>${m.plant?.name || ''}</td>
+            <td>${m.staff?.name || ''}</td>
+            <td>${m.task_type}</td>
+            <td>${m.scheduled_date}</td>
+            <td>${m.status}</td>
+            <td>
+                <button onclick="editMaintenance(${m.maintenance_id}, ${m.plant_id}, ${m.admin_staff_id}, '${m.task_type}', '${m.scheduled_date}', '${m.status}')">Edit</button>
+                <button onclick="deleteMaintenance(${m.maintenance_id})">Delete</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("tableBody").innerHTML = rows;
+}
+
+// ================= SAVE =================
+async function saveMaintenance() {
+
+    let payload = {
         plant_id: document.getElementById("plant_id").value,
+        admin_staff_id: document.getElementById("admin_staff_id").value,
         task_type: document.getElementById("task_type").value,
         scheduled_date: document.getElementById("scheduled_date").value,
         status: document.getElementById("status").value
     };
 
-    if (editMode) {
+    let url = `${API}/maintenances`;
+    let method = "POST";
 
-        // ✏️ UPDATE
-        fetch(`${API_URL}/${editId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json())
-        .then(() => {
-            editMode = false;
-            editId = null;
-            clearForm();
-            loadMaintenance();
-        });
-
-    } else {
-
-        // ➕ CREATE
-        fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json())
-        .then(() => {
-            clearForm();
-            loadMaintenance();
-        });
+    if (editId) {
+        url = `${API}/maintenances/${editId}`;
+        method = "PUT";
     }
+
+    await fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
+
+    resetForm();
+    loadMaintenance();
 }
 
+// ================= EDIT =================
+function editMaintenance(id, plant, staff, task, date, status) {
 
-// ✏️ EDIT
-function editMaintenance(id, plant_id, task_type, scheduled_date, status) {
-
-    document.getElementById("plant_id").value = plant_id;
-    document.getElementById("task_type").value = task_type;
-    document.getElementById("scheduled_date").value = scheduled_date;
+    document.getElementById("plant_id").value = plant;
+    document.getElementById("admin_staff_id").value = staff;
+    document.getElementById("task_type").value = task;
+    document.getElementById("scheduled_date").value = date;
     document.getElementById("status").value = status;
 
-    editMode = true;
     editId = id;
 }
 
-
-// ❌ DELETE
-function deleteMaintenance(id) {
-    fetch(`${API_URL}/${id}`, {
+// ================= DELETE =================
+async function deleteMaintenance(id) {
+    await fetch(`${API}/maintenances/${id}`, {
         method: "DELETE"
-    })
-    .then(() => {
-        loadMaintenance();
     });
+
+    loadMaintenance();
 }
 
+// ================= RESET =================
+function resetForm() {
+    editId = null;
 
-// 🧹 CLEAR FORM
-function clearForm() {
-    document.getElementById("plant_id").value = "";
     document.getElementById("task_type").value = "";
-    document.getElementById("scheduled_date").value = "";
     document.getElementById("status").value = "";
+    document.getElementById("scheduled_date").value = "";
 }
 
-
-// AUTO LOAD
+// ================= INIT =================
+loadPlants();
+loadStaff();
 loadMaintenance();
 
 </script>

@@ -34,4 +34,9 @@ class AdminStaff extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function maintenances()
+{
+    return $this->hasMany(Maintenance::class, 'admin_staff_id', 'admin_staff_id');
+}
 }

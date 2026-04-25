@@ -76,4 +76,13 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Logged out']);
     }
+
+     // 🔥 GET ALL STAFF
+    public function index()
+    {
+        return response()->json(
+            AdminStaff::select('admin_staff_id','name','role')->get()
+        );
+    }
+
 }

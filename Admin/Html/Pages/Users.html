@@ -1,133 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+<meta charset="UTF-8">
+<title>Admin - Staff Management</title>
 
-    <style>
-        /* ==============================================
-   REGISTER USER PAGE - MODERN & CLEAN (Sidebar untouched)
-   Fresh green theme, glassmorphism, smooth interactions
+<link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+
+ <style>
+    /* ==============================================
+   STAFF MANAGEMENT (sidebar untouched)
+   Fresh green theme, glassmorphism, responsive table
 ================================================= */
 
 /* ----- MAIN CONTENT AREA ----- */
 .dashboard-content {
-    padding: 2rem 2.5rem;
+    padding: 2rem;
     background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
     border-radius: 36px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     animation: fadeSlideUp 0.4s ease-out;
-    max-width: 600px;
-    margin: 0 auto;
     width: 100%;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .dashboard-content h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 600;
-    color: var(--primary-green, #2e7d32);
-    margin-bottom: 1.8rem;
-    border-left: 5px solid var(--accent-leaf, #6b8c42);
+    color: #2e7d32;
+    margin: 0 0 1.5rem 0;
+    border-left: 5px solid #6b8c42;
     padding-left: 1rem;
     display: inline-block;
 }
 
-/* ----- INPUT FIELDS ----- */
-.dashboard-content input {
+/* ----- REGISTRATION FORM ----- */
+.dashboard-content input[type="text"],
+.dashboard-content input[type="email"],
+.dashboard-content input[type="password"] {
     width: 100%;
-    padding: 14px 20px;
-    margin-bottom: 1rem;
+    max-width: 400px;
+    padding: 12px 18px;
+    margin: 0 0 1rem 0;
     border: 1px solid #d0e2c0;
     border-radius: 48px;
-    font-size: 1rem;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
     background: #fefef7;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
+    font-size: 0.95rem;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    transition: all 0.2s;
+    display: block;
 }
 
 .dashboard-content input:focus {
     outline: none;
-    border-color: var(--primary-green, #2e7d32);
-    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
     background: white;
 }
 
 .dashboard-content input::placeholder {
     color: #9bbf8f;
-    font-weight: 400;
 }
 
-/* ----- REGISTER BUTTON ----- */
+/* Register button */
 .dashboard-content button {
-    background: linear-gradient(135deg, var(--primary-green, #2e7d32), var(--primary-dark, #1b5e20));
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
     border: none;
     color: white;
-    padding: 14px 32px;
+    padding: 12px 32px;
     border-radius: 48px;
-    font-size: 1rem;
     font-weight: 600;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.3s;
-    width: 100%;
-    margin-top: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    margin: 0.5rem 0 1rem 0;
     font-family: inherit;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .dashboard-content button:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, var(--primary-dark, #1b5e20), #0f3b0f);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
-.dashboard-content button:active {
-    transform: translateY(1px);
-}
-
-/* ----- MESSAGE TEXT ----- */
+/* Message paragraph */
 #msg {
-    margin-top: 1.5rem;
-    padding: 12px;
+    padding: 10px 18px;
     border-radius: 48px;
-    text-align: center;
-    font-weight: 500;
     background: #e8f5e9;
-    color: var(--primary-green, #2e7d32);
-    transition: all 0.2s;
-    display: block;
+    color: #2e7d32;
+    font-weight: 500;
+    margin: 1rem 0;
+    display: inline-block;
+    animation: fadeIn 0.3s;
 }
 
-/* Error state (added via JavaScript, but style it anyway) */
-#msg:empty {
-    display: none;
+/* Horizontal rule */
+hr {
+    margin: 2rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c8e6c9, transparent);
 }
 
-/* If message contains "Error" make it reddish (optional) */
-#msg:contains("Error") {
-    background: #ffefef;
-    color: #c62828;
+/* ----- STAFF TABLE ----- */
+.dashboard-content table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    margin-top: 1rem;
 }
 
-/* But since :contains isn't standard, we'll just add a generic error class via JS? 
-   No worries, user can keep as is; it will still look fine. */
+.dashboard-content thead tr {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: white;
+}
 
-/* ----- RESPONSIVE ----- */
-@media (max-width: 768px) {
+.dashboard-content th {
+    padding: 14px 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.dashboard-content td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #eef3e8;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #1f2a1f;
+}
+
+/* Row striping & hover */
+.dashboard-content tbody tr:nth-child(even) {
+    background-color: #fafefa;
+}
+
+.dashboard-content tbody tr:hover {
+    background: #f5fbf0;
+    transition: 0.2s;
+}
+
+/* Responsive: table scroll on small screens */
+@media (max-width: 850px) {
     .dashboard-content {
-        padding: 1.5rem;
-        max-width: 95%;
+        padding: 1rem;
+        overflow-x: auto;
     }
 
-    .dashboard-content h2 {
-        font-size: 1.6rem;
+    .dashboard-content table {
+        min-width: 500px;
+    }
+
+    .dashboard-content input[type="text"],
+    .dashboard-content input[type="email"],
+    .dashboard-content input[type="password"] {
+        max-width: 100%;
     }
 }
 
-/* ----- ANIMATION ----- */
+/* Small phones */
+@media (max-width: 500px) {
+    .dashboard-content h2 {
+        font-size: 1.4rem;
+    }
+}
+
+/* ----- ANIMATIONS ----- */
 @keyframes fadeSlideUp {
     from {
         opacity: 0;
@@ -138,14 +184,19 @@
         transform: translateY(0);
     }
 }
-    </style>
-    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+ </style>
 </head>
+
 <body>
 
 <div class="main-admin-dashboard">
 
-    <!-- Sidebar -->
+   <!-- SIDEBAR -->
     <div class="side-bar">
         <h1>Admin Dashboard</h1>
 
@@ -163,55 +214,120 @@
                     <a href="./supplier_order.html">Supplier Order</a>
                     <a href="./Notification.html">Notification</a>
                     <a href="./Report.html">Report</a>
+                    
+                   
+                    
                 </ul>
-        </div>
+            </div>
     </div>
 
-    <!-- CONTENT -->
-    <div class="dashboard-content" id="dashboard-content">
-        <h2>Register Staff</h2>
+<!-- CONTENT -->
+<div class="dashboard-content">
 
-        <input type="text" id="name" placeholder="Name"><br><br>
-        <input type="email" id="email" placeholder="Email"><br><br>
-        <input type="password" id="password" placeholder="Password"><br><br>
+<h2>Register Staff</h2>
 
-        <button onclick="registerUser()">Register</button>
+<input type="text" id="name" placeholder="Name">
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
 
-        <p id="msg"></p>
-    </div>
+<button onclick="registerUser()">Register Staff</button>
 
+<p id="msg"></p>
+
+<hr>
+
+<h2>Staff List</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+
+    <tbody id="staffTable"></tbody>
+</table>
+
+</div>
 </div>
 
 <script>
+
+const API = "http://127.0.0.1:8000/api/auth";
+
+// ================= REGISTER STAFF =================
 async function registerUser() {
 
-    let name = document.getElementById("name").value;
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
+    let payload = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        role: "Staff" // 🔥 AUTO FIX (important)
+    };
 
-    let response = await fetch("http://127.0.0.1:8000/api/user/register", {
+    let res = await fetch(`${API}/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Accept": "application/json"
         },
-        body: JSON.stringify({
-            name: name,
-            email: email,
-            password: password
-        })
+        body: JSON.stringify(payload)
     });
 
-    let data = await response.json();
+    let data = await res.json();
 
-    if (response.ok) {
-        document.getElementById("msg").innerText = "User Registered Successfully!";
+    if (res.ok) {
+        document.getElementById("msg").innerText = "Staff Registered Successfully!";
+        loadStaff(); // refresh list
     } else {
         document.getElementById("msg").innerText = "Error: " + JSON.stringify(data);
     }
-
-    console.log(data);
 }
+
+// ================= LOAD STAFF (INDEX) =================
+ 
+
+async function loadStaff() {
+
+    try {
+        let res = await fetch("http://127.0.0.1:8000/api/admin-staff");
+
+        if (!res.ok) {
+            throw new Error("API Error: " + res.status);
+        }
+
+        let data = await res.json();
+
+        console.log(data);
+
+        let staffList = Array.isArray(data) ? data : data.data;
+
+        let table = document.getElementById("staffTable");
+        table.innerHTML = "";
+
+        staffList.forEach(s => {
+            table.innerHTML += `
+            <tr>
+                <td>${s.admin_staff_id}</td>
+                <td>${s.name}</td>
+                <td>${s.email}</td>
+                <td>${s.role}</td>
+            </tr>`;
+        });
+
+    } catch (error) {
+        console.log("LOAD ERROR:", error);
+        document.getElementById("staffTable").innerHTML =
+            "<tr><td colspan='4'>Failed to load data</td></tr>";
+    }
+}
+
+
+loadStaff();
+
 </script>
 
 </body>

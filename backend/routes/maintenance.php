@@ -9,4 +9,6 @@ Route::prefix('maintenances')->group(function () {
     Route::get('/{id}', [MaintenanceController::class, 'show']);
     Route::put('/{id}', [MaintenanceController::class, 'update']);
     Route::delete('/{id}', [MaintenanceController::class, 'destroy']);
+    
 });
+
