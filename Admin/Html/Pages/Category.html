@@ -5,7 +5,221 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
     
- 
+    <style>
+        /* ==============================================
+   CATEGORIES PAGE - MODERN & FRESH (Sidebar untouched)
+   Clean card layout, smooth interactions
+================================================= */
+
+/* ----- MAIN CONTENT AREA ----- */
+.dashboard-content {
+    padding: 1.8rem 2rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    border-radius: 36px;
+    animation: fadeSlideUp 0.4s ease-out;
+}
+
+.dashboard-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-green, #2e7d32);
+    margin-bottom: 1.5rem;
+    border-left: 5px solid var(--accent-leaf, #6b8c42);
+    padding-left: 1rem;
+    display: inline-block;
+}
+
+/* ----- CREATE CATEGORY SECTION ----- */
+.dashboard-content > div:first-of-type {
+    background: white;
+    border-radius: 28px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-content > div:first-of-type:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-content > div:first-of-type input {
+    flex: 2;
+    padding: 12px 18px;
+    border: 1px solid #d0e2c0;
+    border-radius: 48px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    background: #fefef7;
+    transition: all 0.2s;
+}
+
+.dashboard-content > div:first-of-type input:focus {
+    outline: none;
+    border-color: var(--primary-green, #2e7d32);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
+
+.dashboard-content > div:first-of-type button {
+    background: linear-gradient(135deg, var(--primary-green, #2e7d32), var(--primary-dark, #1b5e20));
+    border: none;
+    color: white;
+    padding: 12px 32px;
+    border-radius: 48px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.dashboard-content > div:first-of-type button:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, var(--primary-dark, #1b5e20), #0f3b0f);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* ----- HORIZONTAL RULE ----- */
+hr {
+    margin: 2rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--primary-light, #c8e6c9), transparent);
+}
+
+/* ----- CATEGORY LIST CONTAINER ----- */
+#categoryList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 1rem;
+}
+
+/* Each category row (wrapper div) */
+#categoryList > div {
+    background: white;
+    border-radius: 60px;
+    padding: 8px 12px 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s;
+    border: 1px solid #eef3e8;
+}
+
+#categoryList > div:hover {
+    transform: translateX(5px);
+    background: #fefef7;
+    border-color: var(--primary-light, #c8e6c9);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+/* Category name input */
+#categoryList input {
+    flex: 3;
+    padding: 10px 16px;
+    border: 1px solid #e2e8e0;
+    border-radius: 40px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #fafefa;
+    transition: all 0.2s;
+}
+
+#categoryList input:focus {
+    outline: none;
+    border-color: var(--primary-green, #2e7d32);
+    background: white;
+    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
+}
+
+/* Buttons inside each row */
+#categoryList button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+
+/* Update button */
+#categoryList button:first-of-type {
+    background: #e8f5e9;
+    color: var(--primary-green, #2e7d32);
+}
+
+#categoryList button:first-of-type:hover {
+    background: var(--primary-green, #2e7d32);
+    color: white;
+    transform: scale(1.02);
+}
+
+/* Delete button */
+#categoryList button:last-of-type {
+    background: #ffefef;
+    color: #c62828;
+}
+
+#categoryList button:last-of-type:hover {
+    background: #c62828;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* ----- RESPONSIVE (mobile) ----- */
+@media (max-width: 768px) {
+    .dashboard-content {
+        padding: 1rem;
+    }
+
+    .dashboard-content > div:first-of-type {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-content > div:first-of-type input,
+    .dashboard-content > div:first-of-type button {
+        width: 100%;
+    }
+
+    #categoryList > div {
+        border-radius: 24px;
+        padding: 12px;
+    }
+
+    #categoryList input {
+        flex: auto;
+        width: 100%;
+        order: 1;
+    }
+
+    #categoryList button {
+        flex: 1;
+    }
+}
+
+/* ----- FADE IN ANIMATION ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
     
     <title>Document</title>
 </head>
@@ -16,9 +230,23 @@
         <div class="side-bar">
             <h1>Admin Dashboard</h1>
 
-            <div class="pages-links">
+           <div class="pages-links">
                 <ul>
-                    <a href="#">Categories</a>
+                    <a href="../Admin Dashboard.html">Dashboard</a>
+                     <a href="./App Plants.html">Add Plants</a>
+                     <a href="./Category.html">Categories</a>
+                    <a href="./Users.html">Users</a>
+                    <a href="./Orders.html">Orders</a>
+                    <a href="./Order Details.html">Order Details</a>
+                    <a href="./Payment.html">Payment</a>
+                    <a href="./Maintenance.html">Maintenance</a>
+                    <a href="./Supplier.html">Supplier</a>
+                    <a href="./supplier_order.html">Supplier Order</a>
+                    <a href="./Notification.html">Notification</a>
+                    <a href="./Report.html">Report</a>
+                    
+                   
+                    
                 </ul>
             </div>
         </div>

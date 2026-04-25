@@ -4,107 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
-    <title>Admin Dashboard - Order Details</title>
+
     <style>
-        .dashboard-content {
-            flex: 1;
-            padding: 2rem 2.5rem;
-            background-color: #121212;
-            color: #e0e0e0;
-            overflow-y: auto;
-        }
+        /* ==============================================
+   ORDER DETAILS MANAGEMENT PAGE - MODERN & CLEAN (Sidebar untouched)
+   Fresh green theme, glassmorphism, smooth UX
+   Shows plant names instead of IDs in table
+================================================= */
 
-        .dashboard-content h2 {
-            font-size: 1.8rem;
-            font-weight: 500;
-            color: #ffffff;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #C6A56A;
-            padding-left: 1rem;
-        }
+/* ----- MAIN CONTENT AREA ----- */
+.dashboard-content {
+    padding: 1.8rem 2rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    border-radius: 36px;
+    animation: fadeSlideUp 0.4s ease-out;
+}
 
-        .form-container {
-            background: #1e1e1e;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            border: 1px solid #333;
-            margin-bottom: 2rem;
-        }
+.dashboard-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-green, #2e7d32);
+    margin-bottom: 1.8rem;
+    border-left: 5px solid var(--accent-leaf, #6b8c42);
+    padding-left: 1rem;
+    display: inline-block;
+}
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            align-items: end;
-        }
+/* ----- FORM SECTION (Add/Update Order Detail) ----- */
+.form-container {
+    background: white;
+    border-radius: 28px;
+    padding: 1.5rem;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
 
-        .dashboard-content input {
-            padding: 0.75rem 1rem;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            border: 1px solid #444;
-            border-radius: 8px;
-            background-color: #2d2d2d;
-            color: #fff;
-            outline: none;
-            width: 100%;
-            box-sizing: border-box;
-        }
+.form-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
 
-        .dashboard-content input:focus {
-            border-color: #C6A56A;
-            background-color: #333;
-        }
+.form-container h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--primary-dark, #1b5e20);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-light, #c8e6c9);
+    display: inline-block;
+    padding-bottom: 4px;
+}
 
-        .dashboard-content button {
-            background-color: #C6A56A;
-            color: #121212;
-            border: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+/* Form grid layout */
+.form-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
 
-        .dashboard-content button:hover {
-            background-color: #d4b885;
-            transform: translateY(-2px);
-        }
+.form-grid input,
+.form-grid select {
+    flex: 1 1 170px;
+    padding: 12px 16px;
+    border: 1px solid #d0e2c0;
+    border-radius: 48px;
+    font-size: 0.95rem;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #fefef7;
+    transition: all 0.2s;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background: #1e1e1e;
-            border-radius: 12px;
-            overflow: hidden;
-        }
+.form-grid input:focus,
+.form-grid select:focus {
+    outline: none;
+    border-color: var(--primary-green, #2e7d32);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    background: white;
+}
 
-        th {
-            background-color: #252525;
-            color: #C6A56A;
-            font-weight: 600;
-            text-align: left;
-            padding: 1.2rem;
-            border-bottom: 2px solid #333;
-        }
+.form-grid input::placeholder {
+    color: #9bbf8f;
+}
 
-        td {
-            padding: 1rem 1.2rem;
-            border-bottom: 1px solid #333;
-        }
+/* Save button inside form */
+.form-grid button {
+    background: linear-gradient(135deg, var(--primary-green, #2e7d32), var(--primary-dark, #1b5e20));
+    border: none;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 48px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
 
-        tr:hover td {
-            background-color: #252525;
-        }
+.form-grid button:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, var(--primary-dark, #1b5e20), #0f3b0f);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
 
-        .btn-delete {
-            background-color: #cf6679 !important;
-            color: white !important;
-        }
+/* ----- HORIZONTAL RULE ----- */
+hr {
+    margin: 2rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--primary-light, #c8e6c9), transparent);
+}
+
+/* ----- TABLE STYLES ----- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    margin-top: 0.5rem;
+}
+
+table thead tr {
+    background: linear-gradient(135deg, var(--primary-green, #2e7d32), var(--primary-dark, #1b5e20));
+    color: white;
+}
+
+table th {
+    padding: 14px 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+table td {
+    padding: 12px 8px;
+    text-align: center;
+    border-bottom: 1px solid #eef3e8;
+    color: var(--text-dark, #1e2f1e);
+    font-size: 0.9rem;
+}
+
+table tbody tr:hover {
+    background: #fafef7;
+    transition: background 0.2s;
+}
+
+/* Plant name styling (makes it slightly italic/bold if desired) */
+table td:nth-child(3) {
+    font-weight: 500;
+    color: var(--primary-dark, #1b5e20);
+}
+
+/* Action buttons inside table */
+table td button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-size: 0.8rem;
+    margin: 0 4px;
+}
+
+/* Edit button - override inline style (dark grey) with our green theme */
+table td button:first-child {
+    background: #e8f5e9 !important;
+    color: var(--primary-green, #2e7d32) !important;
+}
+
+table td button:first-child:hover {
+    background: var(--primary-green, #2e7d32) !important;
+    color: white !important;
+    transform: scale(1.02);
+}
+
+/* Delete button */
+table td button:last-child {
+    background: #ffefef;
+    color: #c62828;
+}
+
+table td button:last-child:hover {
+    background: #c62828;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* ----- RESPONSIVE (mobile & tablet) ----- */
+@media (max-width: 768px) {
+    .dashboard-content {
+        padding: 1rem;
+    }
+
+    .form-grid {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-grid input,
+    .form-grid select,
+    .form-grid button {
+        width: 100%;
+    }
+
+    /* Make table horizontally scrollable on small screens */
+    .dashboard-content {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 700px;
+    }
+
+    table th, table td {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 480px) {
+    .dashboard-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-container h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* ----- FADE IN ANIMATION ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
     </style>
+    <title>Admin Dashboard - Order Details</title>
+     
 </head>
 <body>
 
@@ -115,11 +265,24 @@
         <h1>Admin Dashboard</h1>
 
         <div class="pages-links">
-            <ul>
-                <a href="#">Categories</a>
-                <a href="#" onclick="loadOrderDetails()">Order Details</a>
-            </ul>
-        </div>
+                <ul>
+                    <a href="../Admin Dashboard.html">Dashboard</a>
+                     <a href="./App Plants.html">Add Plants</a>
+                     <a href="./Category.html">Categories</a>
+                    <a href="./Users.html">Users</a>
+                    <a href="./Orders.html">Orders</a>
+                    <a href="./Order Details.html">Order Details</a>
+                    <a href="./Payment.html">Payment</a>
+                    <a href="./Maintenance.html">Maintenance</a>
+                    <a href="./Supplier.html">Supplier</a>
+                    <a href="./supplier_order.html">Supplier Order</a>
+                    <a href="./Notification.html">Notification</a>
+                    <a href="./Report.html">Report</a>
+                    
+                   
+                    
+                </ul>
+            </div>
     </div>
 
     <!-- DASHBOARD CONTENT -->
@@ -181,7 +344,7 @@ function loadOrderDetails() {
                 <tr>
                     <td>${item.order_detail_id}</td>
                     <td>${item.order_id}</td>
-                    <td>${item.plant_id}</td>
+                    <td>${item.plant ? item.plant.name : 'N/A'}</td>
                     <td>${item.quantity}</td>
                     <td>${item.price}</td>
                     <td>

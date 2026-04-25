@@ -6,68 +6,282 @@
 <title>Checkout</title>
 
 <script src="https://js.stripe.com/v3/"></script>
-
+ 
 <style>
-body {
-    font-family: Arial;
-    background: #f5f5f5;
-    padding: 20px;
+    /* Global Styles & Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    color: #1e2a3a;
+}
+
+/* Main Container */
 .container {
-    max-width: 650px;
-    margin: auto;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: transparent;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+/* Headings */
+h2 {
+    width: 100%;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #0f3b2c;
+    letter-spacing: -0.5px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    border-left: 5px solid #2c7a4d;
+    padding-left: 1rem;
+    color: #1e3a2f;
+}
+
+/* Box Styles (Cart & Form Sections) */
+.box {
     background: white;
-    padding: 20px;
+    border-radius: 28px;
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+    padding: 1.8rem;
+    flex: 1;
+    min-width: 280px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.2);
+}
+
+/* Cart Items Container */
+#cartContainer {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding-right: 0.5rem;
+}
+
+/* Custom Scrollbar */
+#cartContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+#cartContainer::-webkit-scrollbar-track {
+    background: #e2e8f0;
     border-radius: 10px;
 }
 
-h2 { text-align: center; }
-
-.box {
-    background: #fafafa;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 6px;
+#cartContainer::-webkit-scrollbar-thumb {
+    background: #2c7a4d;
+    border-radius: 10px;
 }
 
+/* Individual Cart Item */
 .cart-item {
     display: flex;
     justify-content: space-between;
-    padding: 5px 0;
+    align-items: center;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid #e9edf2;
+    font-size: 1rem;
 }
 
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item span:first-child {
+    font-weight: 500;
+    color: #2d3e50;
+}
+
+.cart-item span:last-child {
+    font-weight: 600;
+    color: #1f8a4c;
+    background: #e6f4ea;
+    padding: 0.2rem 0.8rem;
+    border-radius: 40px;
+}
+
+/* Total Box */
+#totalBox {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px dashed #cbd5e1;
+    text-align: right;
+    color: #0f3b2c;
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 0.8rem 1rem;
+}
+
+/* Input Fields & Select */
 input, select {
     width: 100%;
-    padding: 10px;
-    margin: 6px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.2rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    color: #1e2a3a;
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    background: #1b3022;
-    color: white;
-    border: none;
-    margin-top: 10px;
-    cursor: pointer;
-    border-radius: 6px;
+input:focus, select:focus {
+    outline: none;
+    border-color: #2c7a4d;
+    box-shadow: 0 0 0 3px rgba(44, 122, 77, 0.2);
 }
 
-button:hover { background: #344e41; }
+input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Card Container */
+#card-container {
+    margin: 0.5rem 0 1.2rem 0;
+    padding: 0.8rem;
+    background: #f8fafc;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+}
 
 #card-element {
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-top: 8px;
-    border-radius: 5px;
+    padding: 0.7rem 0;
+    background: white;
+    border-radius: 16px;
 }
 
+/* Error Box */
 .error {
-    color: red;
-    margin-top: 10px;
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin: 0.5rem 0 1rem;
+    padding: 0.5rem;
+    background: #fee2e2;
+    border-radius: 40px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Place Order Button */
+button {
+    background: #0f3b2c;
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 40px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background: #1f5e43;
+    transform: scale(1.01);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Empty cart / info messages */
+#cartContainer:contains("Login required"),
+#cartContainer:contains("Cart is empty"),
+#cartContainer:contains("Error loading cart") {
+    text-align: center;
+    padding: 2rem;
+    color: #64748b;
+    font-style: italic;
+    background: #f1f5f9;
+    border-radius: 28px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+    
+    .container {
+        gap: 1.2rem;
+    }
+    
+    .box {
+        padding: 1.3rem;
+    }
+    
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    h3 {
+        font-size: 1.3rem;
+    }
+    
+    .cart-item {
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .cart-item span:last-child {
+        margin-left: auto;
+    }
+    
+    #totalBox {
+        font-size: 1.3rem;
+    }
+    
+    button {
+        padding: 0.85rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .box {
+        min-width: 100%;
+    }
+    
+    h2 {
+        font-size: 1.7rem;
+    }
+    
+    input, select {
+        padding: 0.7rem 0.9rem;
+        margin-bottom: 1rem;
+    }
 }
 </style>
 

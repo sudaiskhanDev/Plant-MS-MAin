@@ -53,4 +53,9 @@ public function supplierOrders()
 {
     return $this->hasMany(SupplierOrder::class, 'plant_id', 'plant_id');
 }
+
+public function plant()
+{
+    return $this->belongsTo(Plant::class, 'plant_id', 'plant_id');
+}
 }

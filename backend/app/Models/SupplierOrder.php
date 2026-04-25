@@ -26,4 +26,6 @@ public function plant()
 {
     return $this->belongsTo(Plant::class, 'plant_id', 'plant_id');
 }
+
+
 }

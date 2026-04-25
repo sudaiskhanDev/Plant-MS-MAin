@@ -4,133 +4,231 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
-    <style>
-        .dashboard-content {
-            flex: 1;
-            padding: 2rem 2.5rem;
-            background-color: #F9FBF9;
-            overflow-y: auto;
-        }
 
-        .dashboard-content h2 {
-            font-size: 1.8rem;
-            font-weight: 500;
-            color: #1B3022;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #C6A56A;
-            padding-left: 1rem;
-        }
+         <style>/* ==============================================
+   PLANT CRUD PAGE - STYLES (Sidebar untouched)
+   Modern green theme, glassmorphism, smooth UX
+================================================= */
 
-        .form-section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(163, 177, 138, 0.2);
-            margin-bottom: 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            align-items: end;
-        }
+/* ----- CRUD CONTAINER (within dashboard-content) ----- */
+.dashboard-content {
+    padding: 1.5rem 2rem;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 32px;
+    backdrop-filter: blur(4px);
+    animation: fadeSlideUp 0.4s ease-out;
+}
 
-        .dashboard-content input, 
-        .dashboard-content select, 
-        .dashboard-content textarea {
-            padding: 0.75rem 1rem;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            border: 1.5px solid #E2E8E3;
-            border-radius: 10px;
-            background-color: #F9FBF9;
-            outline: none;
-            width: 100%;
-            box-sizing: border-box;
-        }
+.dashboard-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-green, #2e7d32);
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    border-left: 5px solid var(--accent-leaf, #6b8c42);
+    padding-left: 1rem;
+}
 
-        .dashboard-content input:focus, 
-        .dashboard-content select:focus {
-            border-color: #A3B18A;
-            background-color: white;
-        }
+/* ----- FORM SECTIONS (Create & Update) ----- */
+.form-section {
+    background: white;
+    border-radius: 28px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md, 0 8px 20px rgba(0, 0, 0, 0.08));
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
 
-        .dashboard-content button {
-            background-color: #1B3022;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.25rem;
-            border-radius: 40px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+.form-section:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg, 0 12px 28px rgba(0, 0, 0, 0.12));
+}
 
-        .dashboard-content button:hover {
-            background-color: #344E41;
-            transform: translateY(-1px);
-        }
+/* Inputs, selects, file */
+.form-section input,
+.form-section select,
+.form-section input[type="file"] {
+    flex: 1 1 180px;
+    padding: 12px 16px;
+    border: 1px solid #d0e2c0;
+    border-radius: 40px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    background: #fefef7;
+    transition: all 0.2s;
+}
 
-        #plantList {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
+.form-section input:focus,
+.form-section select:focus {
+    outline: none;
+    border-color: var(--primary-green, #2e7d32);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
 
-        .plant-card {
-            background: white;
-            border-radius: 20px;
-            padding: 1.5rem;
-            border: 1px solid rgba(163, 177, 138, 0.2);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+/* Buttons inside forms */
+.form-section button {
+    background: linear-gradient(135deg, var(--primary-green, #2e7d32), var(--primary-dark, #1b5e20));
+    border: none;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-sm, 0 2px 6px rgba(0,0,0,0.1));
+}
 
-        .plant-card:hover {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            border-color: #A3B18A;
-        }
+.form-section button:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, var(--primary-dark, #1b5e20), #0f3b0f);
+    box-shadow: var(--shadow-md, 0 6px 14px rgba(0,0,0,0.15));
+}
 
-        .plant-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-        }
+/* Horizontal ruler */
+hr {
+    margin: 2rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--primary-light, #c8e6c9), transparent);
+}
 
-        .plant-card h3 {
-            margin: 0;
-            color: #1B3022;
-        }
+/* ----- PLANT LIST (GRID) ----- */
+#plantList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 1rem;
+}
 
-        .plant-card .price {
-            font-weight: 600;
-            color: #C6A56A;
-            font-size: 1.1rem;
-        }
+/* Plant Card */
+.plant-card {
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm, 0 4px 12px rgba(0,0,0,0.05));
+    transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(107, 140, 66, 0.2);
+}
 
-        .card-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: auto;
-            padding-top: 1rem;
-        }
+.plant-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg, 0 20px 30px -10px rgba(0,0,0,0.15));
+}
 
-        .btn-edit {
-            background-color: transparent !important;
-            color: #344E41 !important;
-            border: 1px solid #A3B18A !important;
-            flex: 1;
-        }
+/* Image area */
+.plant-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
 
-        .btn-delete {
-            background-color: #c96f6f !important;
-            flex: 1;
-        }
+.plant-card:hover img {
+    transform: scale(1.03);
+}
 
-    </style>
+/* Card content */
+.plant-card h3 {
+    font-size: 1.4rem;
+    margin: 1rem 1rem 0.2rem;
+    color: var(--primary-dark, #1b5e20);
+}
+
+.plant-card .price {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--accent-leaf, #6b8c42);
+    margin: 0 1rem 0.3rem;
+}
+
+.plant-card p {
+    margin: 0.3rem 1rem;
+    color: var(--text-muted, #4a5b4a);
+    line-height: 1.4;
+}
+
+/* Card actions (edit/delete buttons) */
+.card-actions {
+    display: flex;
+    gap: 12px;
+    padding: 1rem;
+    margin-top: auto;
+    border-top: 1px solid #eef3e8;
+}
+
+.btn-edit, .btn-delete {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.btn-edit {
+    background: #e8f5e9;
+    color: var(--primary-green, #2e7d32);
+}
+
+.btn-edit:hover {
+    background: var(--primary-green, #2e7d32);
+    color: white;
+    transform: scale(1.02);
+}
+
+.btn-delete {
+    background: #ffefef;
+    color: #c62828;
+}
+
+.btn-delete:hover {
+    background: #c62828;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* ----- RESPONSIVE FOR CRUD (mobile) ----- */
+@media (max-width: 768px) {
+    .dashboard-content {
+        padding: 1rem;
+    }
+
+    .form-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-section input,
+    .form-section select,
+    .form-section button {
+        width: 100%;
+    }
+
+    #plantList {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animation */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}</style>
+
     <title>Plant CRUD</title>
 </head>
 <body>
@@ -142,11 +240,24 @@
         <h1>Admin Dashboard</h1>
 
         <div class="pages-links">
-            <ul>
-                <a href="./Category.html">Categories</a>
-                <a href="#">Plants</a>
-            </ul>
-        </div>
+                <ul>
+                    <a href="../Admin Dashboard.html">Dashboard</a>
+                     <a href="./App Plants.html">Add Plants</a>
+                     <a href="./Category.html">Categories</a>
+                    <a href="./Users.html">Users</a>
+                    <a href="./Orders.html">Orders</a>
+                    <a href="./Order Details.html">Order Details</a>
+                    <a href="./Payment.html">Payment</a>
+                    <a href="./Maintenance.html">Maintenance</a>
+                    <a href="./Supplier.html">Supplier</a>
+                    <a href="./supplier_order.html">Supplier Order</a>
+                    <a href="./Notification.html">Notification</a>
+                    <a href="./Report.html">Report</a>
+                    
+                   
+                    
+                </ul>
+            </div>
     </div>
 
     <!-- DASHBOARD CONTENT -->

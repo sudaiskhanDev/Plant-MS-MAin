@@ -8,10 +8,10 @@ use App\Models\SupplierOrder;
 
 class SupplierOrderController extends Controller
 {
-    public function index()
-    {
-        return response()->json(SupplierOrder::all());
-    }
+   public function index()
+{
+    return SupplierOrder::with(['supplier', 'plant'])->get();
+}
 
     public function store(Request $request)
     {

@@ -1,38 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
-    <title>Admin Dashboard - Supplier Orders</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supplier Orders</title>
+
+<link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+
+ <style>
+    /* ==============================================
+   SUPPLIER ORDER MANAGEMENT - CLEAN & MODERN (Sidebar untouched)
+   Focus: clear image display, readable details, polished table
+================================================= */
+
+/* ----- MAIN CONTENT AREA (Glassmorphism) ----- */
+.dashboard-content {
+    padding: 2rem 2rem;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(3px);
+    border-radius: 32px;
+    animation: fadeIn 0.4s ease-out;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin-bottom: 1.8rem;
+    border-left: 5px solid #6b8c42;
+    padding-left: 1rem;
+    display: inline-block;
+}
+
+/* ----- FORM SECTION (Add/Update) ----- */
+.dashboard-content > div:first-of-type {
+    background: white;
+    border-radius: 28px;
+    padding: 1.8rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s;
+}
+
+.dashboard-content > div:first-of-type:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-content h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #1b5e20;
+    margin-bottom: 1.2rem;
+    border-left: 3px solid #6b8c42;
+    padding-left: 0.8rem;
+}
+
+/* Form flex layout */
+.dashboard-content > div:first-of-type {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.dashboard-content select,
+.dashboard-content input {
+    flex: 1 1 180px;
+    padding: 12px 18px;
+    border: 1px solid #d4e2c8;
+    border-radius: 40px;
+    font-size: 0.95rem;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #fefdf7;
+    transition: 0.2s;
+}
+
+.dashboard-content select:focus,
+.dashboard-content input:focus {
+    outline: none;
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+    background: white;
+}
+
+.dashboard-content button {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    border: none;
+    color: white;
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.dashboard-content button:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+.status-badge.pending { background: #fff3e0; color: #e67e22; }
+.status-badge.delivered { background: #e8f5e9; color: #2e7d32; }
+.status-badge.cancelled { background: #ffefef; color: #c62828; }
+/* ----- HORIZONTAL RULE ----- */
+hr {
+    margin: 2rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c8e6c9, transparent);
+}
+
+/* ----- TABLE STYLES (clean & readable) ----- */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+table thead tr {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: white;
+}
+
+table th {
+    padding: 15px 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: center;
+    border-bottom: none;
+}
+
+table td {
+    padding: 14px 10px;
+    border-bottom: 1px solid #eff7ea;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #1f2a1f;
+}
+
+/* Zebra striping for better readability */
+table tbody tr:nth-child(even) {
+    background-color: #fafefa;
+}
+
+table tbody tr:hover {
+    background: #f5fbf0;
+    transition: 0.2s;
+}
+
+/* ----- COLUMN: SUPPLIER (Name + Contact) ----- */
+table td:nth-child(2) {
+    text-align: left;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+table td:nth-child(2) small {
+    font-size: 0.7rem;
+    color: #6b8c42;
+    display: block;
+    margin-top: 5px;
+    font-weight: normal;
+}
+
+/* ----- COLUMN: PLANT (Image + Name) : clean inline block ----- */
+table td:nth-child(3) {
+    text-align: left;
+    white-space: nowrap;
+}
+
+table td:nth-child(3) img {
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 12px;
+    vertical-align: middle;
+    border: 1.5px solid #c8e6c9;
+    background: #f9f9f9;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+table td:nth-child(3) img:hover {
+    transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+table td:nth-child(3) span {
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+/* ----- COLUMN: Quantity (highlight) ----- */
+table td:nth-child(4) {
+    font-weight: 700;
+    color: #2e7d32;
+    text-align: center;
+}
+
+/* ----- COLUMN: Status (badge style) ----- */
+table td:nth-child(5) {
+    text-align: center;
+}
+
+table td:nth-child(5) span {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 40px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    background: #f0f2f0;
+    color: #2c3e2c;
+}
+
+/* We will rely on inline badge styling from JS but CSS fallback looks clean.
+   Optionally you can add dynamic coloring with JS classes. */
+
+/* ----- ACTION BUTTONS (Edit / Delete) ----- */
+table td:last-child {
+    text-align: center;
+    white-space: nowrap;
+}
+
+table td button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0 5px;
+    font-family: inherit;
+}
+
+/* Edit button */
+table td button:first-child {
+    background: #e6f4ea;
+    color: #2e7d32;
+}
+
+table td button:first-child:hover {
+    background: #2e7d32;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Delete button */
+table td button:last-child {
+    background: #fee8e8;
+    color: #c62828;
+}
+
+table td button:last-child:hover {
+    background: #c62828;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* ----- RESPONSIVE (Mobile friendly) ----- */
+@media (max-width: 850px) {
+    .dashboard-content {
+        padding: 1.2rem;
+        overflow-x: auto;
+    }
+
+    .dashboard-content > div:first-of-type {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .dashboard-content select,
+    .dashboard-content input,
+    .dashboard-content button {
+        width: 100%;
+    }
+
+    table {
+        min-width: 720px;
+    }
+}
+
+/* Small devices */
+@media (max-width: 500px) {
+    .dashboard-content h2 {
+        font-size: 1.5rem;
+    }
+    .dashboard-content h3 {
+        font-size: 1.1rem;
+    }
+    table td:nth-child(3) img {
+        width: 28px;
+        height: 28px;
+        margin-right: 6px;
+    }
+}
+
+/* ----- ANIMATION ----- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+ </style>
+
 </head>
+
 <body>
 
 <div class="main-admin-dashboard">
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR (UNCHANGED — DO NOT TOUCH) -->
     <div class="side-bar">
         <h1>Admin Dashboard</h1>
 
         <div class="pages-links">
             <ul>
-                <a href="#">Categories</a>
-                <a href="#" onclick="loadSupplierOrders()">Supplier Orders</a>
+                <a href="../Admin Dashboard.html">Dashboard</a>
+                <a href="./App Plants.html">Add Plants</a>
+                <a href="./Category.html">Categories</a>
+                <a href="./Users.html">Users</a>
+                <a href="./Orders.html">Orders</a>
+                <a href="./Order Details.html">Order Details</a>
+                <a href="./Payment.html">Payment</a>
+                <a href="./Maintenance.html">Maintenance</a>
+                <a href="./Supplier.html">Supplier</a>
+                <a href="./supplier_order.html">Supplier Order</a>
+                <a href="./Notification.html">Notification</a>
+                <a href="./Report.html">Report</a>
             </ul>
         </div>
     </div>
 
-    <!-- DASHBOARD CONTENT -->
+    <!-- CONTENT -->
     <div class="dashboard-content">
 
         <h2>Supplier Order Management</h2>
 
-        <!-- CREATE / UPDATE FORM -->
+        <!-- FORM -->
         <div>
             <h3>Add / Update Supplier Order</h3>
 
-            <input type="number" id="supplier_id" placeholder="Supplier ID">
-            <input type="number" id="plant_id" placeholder="Plant ID">
+            <!-- DROPDOWNS (FIXED) -->
+            <select id="supplier_id"></select>
+            <select id="plant_id"></select>
+
             <input type="number" id="quantity" placeholder="Quantity">
             <input type="text" id="delivery_status" placeholder="Delivery Status">
 
@@ -46,13 +375,14 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Supplier ID</th>
-                    <th>Plant ID</th>
+                    <th>Supplier</th>
+                    <th>Plant</th>
                     <th>Quantity</th>
-                    <th>Delivery Status</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
+
             <tbody id="supplierOrderTable"></tbody>
         </table>
 
@@ -61,30 +391,66 @@
 </div>
 
 <script>
-
+// Optional: add dynamic badge colors based on status text
+function colorStatusBadges() {
+    document.querySelectorAll('#supplierOrderTable td:nth-child(5)').forEach(td => {
+        let status = td.innerText.toLowerCase().trim();
+        td.innerHTML = `<span class="status-badge ${status}">${td.innerText}</span>`;
+    });
+}
+// Call after loadSupplierOrders() completes
 const API_URL = "http://localhost:8000/api/supplier-orders";
 
 let editMode = false;
 let editId = null;
 
-
-// 📥 READ
+/* ================= LOAD ORDERS ================= */
 function loadSupplierOrders() {
     fetch(API_URL)
         .then(res => res.json())
         .then(data => {
+
             let rows = "";
 
             data.forEach(order => {
+
                 rows += `
                 <tr>
                     <td>${order.supplier_order_id}</td>
-                    <td>${order.supplier_id}</td>
-                    <td>${order.plant_id}</td>
+
+                    <!-- SUPPLIER NAME + CONTACT -->
+                   <td>
+    ${order.supplier?.name ?? 'N/A'}
+    <br>
+    <small>
+        ${
+            order.supplier?.contact_number ??
+            order.supplier?.phone ??
+            order.supplier?.contact ??
+            'No Contact'
+        }
+    </small>
+</td>
+
+                    <!-- PLANT NAME + IMAGE -->
+                    <td>
+                        ${order.plant ? order.plant.name : 'N/A'}
+                        <br>
+                        <img src="http://127.0.0.1:8000/storage/${order.plant.image}" width="40" height="40">
+                    </td>
+
                     <td>${order.quantity}</td>
                     <td>${order.delivery_status}</td>
+
                     <td>
-                        <button onclick="editSupplierOrder(${order.supplier_order_id}, ${order.supplier_id}, ${order.plant_id}, ${order.quantity}, '${order.delivery_status}')">Edit</button>
+                        <button onclick="editSupplierOrder(
+                            ${order.supplier_order_id},
+                            ${order.supplier_id},
+                            ${order.plant_id},
+                            ${order.quantity},
+                            '${order.delivery_status}'
+                        )">Edit</button>
+
                         <button onclick="deleteSupplierOrder(${order.supplier_order_id})">Delete</button>
                     </td>
                 </tr>`;
@@ -94,8 +460,54 @@ function loadSupplierOrders() {
         });
 }
 
+/* ================= LOAD SUPPLIERS ================= */
+ function loadSuppliers() {
+    fetch("http://localhost:8000/api/suppliers")
+        .then(res => res.json())
+        .then(data => {
 
-// ➕ ➕ CREATE / ✏️ UPDATE
+            let html = "";
+
+            data.forEach(s => {
+
+                let contact =
+                    s.contact_number ??
+                    s.phone ??
+                    s.contact ??
+                    s.mobile ??
+                    'No Contact';
+
+                html += `
+                    <option value="${s.supplier_id}">
+                        ${s.name} - ${contact}
+                    </option>
+                `;
+            });
+
+            document.getElementById("supplier_id").innerHTML = html;
+        });
+}
+/* ================= LOAD PLANTS ================= */
+function loadPlants() {
+    fetch("http://localhost:8000/api/plants")
+        .then(res => res.json())
+        .then(data => {
+
+            let html = "";
+
+            data.forEach(p => {
+                html += `
+                    <option value="${p.plant_id}">
+                        ${p.name}
+                    </option>
+                `;
+            });
+
+            document.getElementById("plant_id").innerHTML = html;
+        });
+}
+
+/* ================= SAVE ================= */
 function saveSupplierOrder() {
 
     let data = {
@@ -105,45 +517,31 @@ function saveSupplierOrder() {
         delivery_status: document.getElementById("delivery_status").value
     };
 
-    if (editMode) {
+    let url = editMode
+        ? `${API_URL}/${editId}`
+        : API_URL;
 
-        // ✏️ UPDATE
-        fetch(`${API_URL}/${editId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json())
-        .then(() => {
-            editMode = false;
-            editId = null;
-            clearForm();
-            loadSupplierOrders();
-        });
+    let method = editMode ? "PUT" : "POST";
 
-    } else {
-
-        // ➕ CREATE
-        fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        .then(res => res.json())
-        .then(() => {
-            clearForm();
-            loadSupplierOrders();
-        });
-    }
+    fetch(url, {
+        method: method,
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => {
+        editMode = false;
+        editId = null;
+        clearForm();
+        loadSupplierOrders();
+    });
 }
 
-
-// ✏️ EDIT
+/* ================= EDIT ================= */
 function editSupplierOrder(id, supplier_id, plant_id, quantity, delivery_status) {
+
     document.getElementById("supplier_id").value = supplier_id;
     document.getElementById("plant_id").value = plant_id;
     document.getElementById("quantity").value = quantity;
@@ -153,29 +551,25 @@ function editSupplierOrder(id, supplier_id, plant_id, quantity, delivery_status)
     editId = id;
 }
 
-
-// ❌ DELETE
+/* ================= DELETE ================= */
 function deleteSupplierOrder(id) {
+
     fetch(`${API_URL}/${id}`, {
         method: "DELETE"
     })
-    .then(() => {
-        loadSupplierOrders();
-    });
+    .then(() => loadSupplierOrders());
 }
 
-
-// 🧹 CLEAR FORM
+/* ================= CLEAR ================= */
 function clearForm() {
-    document.getElementById("supplier_id").value = "";
-    document.getElementById("plant_id").value = "";
     document.getElementById("quantity").value = "";
     document.getElementById("delivery_status").value = "";
 }
 
-
-// AUTO LOAD
+/* ================= INIT ================= */
 loadSupplierOrders();
+loadSuppliers();
+loadPlants();
 
 </script>
 

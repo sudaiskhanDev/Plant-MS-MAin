@@ -81,6 +81,29 @@ class PaymentController extends Controller
         Payment::findOrFail($id)->delete();
         return response()->json(['message' => 'Deleted']);
     }
+    
+
+
+
+
+    //Update
+    public function update(Request $request, $id)
+{
+    $payment = Payment::findOrFail($id);
+
+    $request->validate([
+        'payment_status' => 'required|in:pending,completed,failed,refunded'
+    ]);
+
+    $payment->update([
+        'payment_status' => $request->payment_status
+    ]);
+
+    return response()->json([
+        'message' => 'Payment status updated',
+        'payment' => $payment
+    ]);
+}
 }
 // namespace App\Http\Controllers\Api;
 

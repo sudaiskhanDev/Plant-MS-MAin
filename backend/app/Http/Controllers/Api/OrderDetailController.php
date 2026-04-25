@@ -9,9 +9,11 @@ use App\Models\OrderDetail;
 class OrderDetailController extends Controller
 {
     public function index()
-    {
-        return response()->json(OrderDetail::all());
-    }
+{
+    return response()->json(
+        OrderDetail::with('plant')->get()
+    );
+}
 
     public function store(Request $request)
     {

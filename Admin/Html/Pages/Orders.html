@@ -4,6 +4,242 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+    <style>
+        /* ==============================================
+   ORDER MANAGEMENT PAGE - MODERN & CLEAN (Sidebar untouched)
+   Fresh green theme, responsive table, smooth UX
+================================================= */
+
+/* ----- MAIN CONTENT AREA ----- */
+.dashboard-content {
+    padding: 1.8rem 2rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    border-radius: 36px;
+    animation: fadeSlideUp 0.4s ease-out;
+}
+
+.dashboard-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-green, #2e7d32);
+    margin-bottom: 1.8rem;
+    border-left: 5px solid var(--accent-leaf, #6b8c42);
+    padding-left: 1rem;
+    display: inline-block;
+}
+
+/* ----- FORM SECTION (Add/Update Order) ----- */
+.dashboard-content > div:first-of-type {
+    background: white;
+    border-radius: 28px;
+    padding: 1.5rem;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-content > div:first-of-type:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-content h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--primary-dark, #1b5e20);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-light, #c8e6c9);
+    display: inline-block;
+    padding-bottom: 4px;
+}
+
+/* Form inputs - grid layout */
+.dashboard-content > div:first-of-type {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.dashboard-content input,
+.dashboard-content select {
+    flex: 1 1 180px;
+    padding: 12px 16px;
+    border: 1px solid #d0e2c0;
+    border-radius: 48px;
+    font-size: 0.95rem;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #fefef7;
+    transition: all 0.2s;
+}
+
+.dashboard-content input:focus,
+.dashboard-content select:focus {
+    outline: none;
+    border-color: var(--primary-green, #2e7d32);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    background: white;
+}
+
+.dashboard-content input::placeholder {
+    color: #9bbf8f;
+}
+
+/* Button inside form */
+.dashboard-content button {
+    background: linear-gradient(135deg, var(--primary-green, #2e7d32), var(--primary-dark, #1b5e20));
+    border: none;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 48px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.dashboard-content button:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, var(--primary-dark, #1b5e20), #0f3b0f);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* ----- HORIZONTAL RULE ----- */
+hr {
+    margin: 2rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--primary-light, #c8e6c9), transparent);
+}
+
+/* ----- TABLE STYLES ----- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    margin-top: 0.5rem;
+}
+
+table thead tr {
+    background: linear-gradient(135deg, var(--primary-green, #2e7d32), var(--primary-dark, #1b5e20));
+    color: white;
+}
+
+table th {
+    padding: 14px 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+table td {
+    padding: 12px 8px;
+    text-align: center;
+    border-bottom: 1px solid #eef3e8;
+    color: var(--text-dark, #1e2f1e);
+    font-size: 0.9rem;
+}
+
+table tbody tr:hover {
+    background: #fafef7;
+    transition: background 0.2s;
+}
+
+/* Action buttons inside table */
+table td button {
+    background: #ffefef;
+    border: none;
+    color: #c62828;
+    padding: 6px 16px;
+    border-radius: 40px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-size: 0.8rem;
+}
+
+table td button:hover {
+    background: #c62828;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* Optional: Add edit button styling if you add edit buttons later */
+/* For now only delete exists, but if you add edit: */
+table td button:first-child {
+    background: #e8f5e9;
+    color: var(--primary-green, #2e7d32);
+    margin-right: 8px;
+}
+table td button:first-child:hover {
+    background: var(--primary-green, #2e7d32);
+    color: white;
+}
+
+/* ----- RESPONSIVE (mobile & tablet) ----- */
+@media (max-width: 768px) {
+    .dashboard-content {
+        padding: 1rem;
+    }
+
+    .dashboard-content > div:first-of-type {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-content input,
+    .dashboard-content select,
+    .dashboard-content button {
+        width: 100%;
+    }
+
+    /* Make table horizontally scrollable on small screens */
+    .dashboard-content {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 700px;
+    }
+
+    table th, table td {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 480px) {
+    .dashboard-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-content h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* ----- FADE IN ANIMATION ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
     <title>Admin Dashboard - Orders</title>
 </head>
 <body>
@@ -15,11 +251,24 @@
         <h1>Admin Dashboard</h1>
 
         <div class="pages-links">
-            <ul>
-                <a href="#">Categories</a>
-                <a href="#" onclick="loadOrders()">Orders</a>
-            </ul>
-        </div>
+                <ul>
+                    <a href="../Admin Dashboard.html">Dashboard</a>
+                     <a href="./App Plants.html">Add Plants</a>
+                     <a href="./Category.html">Categories</a>
+                    <a href="./Users.html">Users</a>
+                    <a href="./Orders.html">Orders</a>
+                    <a href="./Order Details.html">Order Details</a>
+                    <a href="./Payment.html">Payment</a>
+                    <a href="./Maintenance.html">Maintenance</a>
+                    <a href="./Supplier.html">Supplier</a>
+                    <a href="./supplier_order.html">Supplier Order</a>
+                    <a href="./Notification.html">Notification</a>
+                    <a href="./Report.html">Report</a>
+                    
+                   
+                    
+                </ul>
+            </div>
     </div>
 
     <!-- DASHBOARD CONTENT -->
@@ -43,18 +292,21 @@
 
         <!-- TABLE -->
         <table border="1" width="100%">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Order Date</th>
-                    <th>Total Amount</th>
-                    <th>Status</th>
-                    <th>User ID</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="orderTable"></tbody>
-        </table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>City</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="orderTable"></tbody>
+</table>
 
     </div>
 
@@ -73,18 +325,25 @@ function loadOrders() {
     fetch(API_URL)
         .then(res => res.json())
         .then(data => {
+
             let rows = "";
 
             data.forEach(order => {
+
                 rows += `
                 <tr>
                     <td>${order.order_id}</td>
                     <td>${order.order_date}</td>
+
+                    <td>${order.name ?? '-'}</td>
+                    <td>${order.phone ?? '-'}</td>
+                    <td>${order.city ?? '-'}</td>
+
                     <td>${order.total_amount}</td>
+                    <td>${order.payment_method}</td>
                     <td>${order.status}</td>
-                    <td>${order.user_id}</td>
+
                     <td>
-                        <button onclick="editOrder(${order.order_id}, '${order.order_date}', ${order.total_amount}, '${order.status}', ${order.user_id})">Edit</button>
                         <button onclick="deleteOrder(${order.order_id})">Delete</button>
                     </td>
                 </tr>`;
@@ -93,7 +352,6 @@ function loadOrders() {
             document.getElementById("orderTable").innerHTML = rows;
         });
 }
-
 
 // ➕ ➕ CREATE / ✏️ UPDATE
 function saveOrder() {
