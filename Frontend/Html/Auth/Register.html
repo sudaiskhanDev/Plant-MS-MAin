@@ -4,75 +4,254 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register</title>
+ 
+<style>/* ==============================================
+   GREENNEST REGISTER PAGE – COMPLETE CSS
+   Glassmorphism, nature-inspired, responsive
+================================================= */
 
-<style>
+/* ----- RESET & BASE ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7f6;
+    font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
+    padding: 1.5rem;
+    position: relative;
+    overflow-x: hidden;
 }
+
+/* Decorative leaf background (subtle) */
+body::before {
+    content: "🌿🌱🌿";
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 3rem;
+    opacity: 0.08;
+    white-space: pre;
+    pointer-events: none;
+}
+
+body::after {
+    content: "🍃🌿🍃";
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 2.5rem;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+/* ----- MAIN CARD (Glassmorphism) ----- */
 .container {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(14px);
+    border-radius: 48px;
+    padding: 2.5rem 2rem;
     width: 100%;
-    max-width: 400px;
-    text-align: center;
+    max-width: 460px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid rgba(46, 125, 50, 0.2);
+    animation: fadeSlideUp 0.5s ease;
 }
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 35px 55px rgba(0, 0, 0, 0.15);
+}
+
+/* ----- HEADLINE ----- */
 h2 {
-    color: #2d5a27;
-    margin-bottom: 25px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2e7d32;
+    margin-bottom: 1.8rem;
+    text-align: center;
+    letter-spacing: -0.3px;
+    position: relative;
 }
+
+h2::after {
+    content: "";
+    display: block;
+    width: 70px;
+    height: 3px;
+    background: linear-gradient(90deg, #6b8c42, #2e7d32);
+    margin: 8px auto 0;
+    border-radius: 4px;
+}
+
+/* ----- INPUT FIELDS ----- */
 input {
     width: 100%;
-    padding: 12px;
+    padding: 14px 18px;
     margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 16px;
+    border: 1px solid #d0e2c0;
+    border-radius: 56px;
+    background: #fefef7;
+    font-size: 1rem;
+    transition: all 0.2s;
+    font-family: inherit;
 }
+
 input:focus {
     outline: none;
-    border-color: #2d5a27;
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+    background: white;
 }
+
+input::placeholder {
+    color: #9bbf8f;
+    font-weight: 400;
+}
+
+/* ----- REGISTER BUTTON ----- */
 button {
     width: 100%;
-    padding: 12px;
-    background-color: #2d5a27;
+    padding: 14px;
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 56px;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-}
-button:hover {
-    background-color: #1e3d1a;
-}
-#msg {
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all 0.3s;
     margin-top: 15px;
-    font-size: 14px;
-    color: #d9534f;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
-.login-link {
-    margin-top: 20px;
-    font-size: 14px;
-}
-.login-link a {
-    color: #2d5a27;
-    text-decoration: none;
-    font-weight: bold;
-}
-</style>
 
+button::before {
+    content: "🌱";
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+button:hover::before {
+    transform: rotate(15deg);
+}
+
+/* ----- MESSAGE (error/success) ----- */
+#msg {
+    margin-top: 1rem;
+    padding: 8px 12px;
+    border-radius: 40px;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: #ffefef;
+    color: #c62828;
+    transition: all 0.2s;
+}
+
+/* Success message (will appear when registration succeeds) */
+#msg:contains("Registered") {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* ----- LOGIN LINK (instead of register-link) ----- */
+.login-link {
+    margin-top: 1.8rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #4a5b4a;
+}
+
+.login-link a {
+    color: #2e7d32;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.login-link a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #2e7d32;
+    transition: width 0.2s;
+}
+
+.login-link a:hover {
+    color: #1b5e20;
+}
+
+.login-link a:hover::after {
+    width: 100%;
+}
+
+/* ----- RESPONSIVE (mobile) ----- */
+@media (max-width: 520px) {
+    body {
+        padding: 1rem;
+    }
+    .container {
+        padding: 1.8rem 1.2rem;
+        border-radius: 32px;
+    }
+    h2 {
+        font-size: 1.6rem;
+    }
+    input {
+        padding: 12px 16px;
+    }
+    button {
+        padding: 12px;
+    }
+}
+
+/* ----- ANIMATIONS ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ----- CUSTOM SCROLLBAR ----- */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+body::-webkit-scrollbar-track {
+    background: #e0e8e0;
+    border-radius: 10px;
+}
+body::-webkit-scrollbar-thumb {
+    background: #2e7d32;
+    border-radius: 10px;
+}</style>
 </head>
 <body>
 

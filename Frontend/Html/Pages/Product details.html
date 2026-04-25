@@ -3,193 +3,232 @@
 <head>
 <meta charset="UTF-8">
 <title>Product Details</title>
+ <style>/* ==============================================
+   PRODUCT DETAILS PAGE – COMPLETE CSS
+   Green theme, glassmorphism, responsive layout
+================================================= */
 
- <style>
-        /* ============================================
-           GREENNEST DESIGN TOKENS
-           ============================================ */
-        :root {
-            --primary: #76A845;
-            --primary-hover: #5E8C33;
-            --soft-mint: #BCE7B8;
-            --header-glow: #E8F5E9;
-            --clean-base: #FFFFFF;
-            --core-text: #1A1A1A;
-            --text-muted: #4A4A4A;
-            --accent-gold: #C6A56A;   /* kept from original, but now as a secondary accent */
+/* ----- RESET & BASE ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-            --radius-sm: 12px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
-            --radius-btn: 20px;
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #fafef7 0%, #e8f5e9 100%);
+    color: #1e2f1e;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-            --shadow-card: 0 8px 24px rgba(26, 26, 26, 0.06);
-            --shadow-btn: 0 6px 14px rgba(118, 168, 69, 0.3);
-        }
+/* ----- MAIN CONTAINER (glassmorphism card) ----- */
+.container {
+    max-width: 900px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-radius: 48px;
+    padding: 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 1.5rem;
+    animation: fadeSlideUp 0.5s ease;
+}
 
-        /* ============================================
-           RESET & BASE
-           ============================================ */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+.container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 28px 45px rgba(0, 0, 0, 0.12);
+}
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, var(--header-glow) 0%, var(--clean-base) 100%);
-            color: var(--core-text);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
+/* Product image */
+.container img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 32px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(107, 140, 66, 0.2);
+}
 
-        /* ============================================
-           PRODUCT CARD / CONTAINER
-           ============================================ */
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background: var(--clean-base);
-            border-radius: var(--radius-lg);
-            padding: 36px 32px;
-            box-shadow: var(--shadow-card);
-            text-align: center;
-        }
+/* Product name */
+.container h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.3px;
+}
 
-        /* Loading / empty text */
-        .container:empty::after,
-        .container:not(:has(img)) {
-            content: "Loading plant details… 🌿";
-            font-size: 1.2rem;
-            color: var(--text-muted);
-        }
+/* Price */
+.container .price {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2e7d32;
+    margin-bottom: 1rem;
+    background: #e8f5e9;
+    display: inline-block;
+    padding: 0.2rem 1rem;
+    border-radius: 60px;
+}
 
-        /* ============================================
-           PRODUCT IMAGE
-           ============================================ */
-        .container img {
-            width: 100%;
-            max-height: 350px;
-            object-fit: cover;
-            border-radius: var(--radius-md);
-            margin-bottom: 24px;
-            border: 2px solid var(--soft-mint);
-            background: var(--header-glow); /* soft background if image has transparency */
-        }
+/* Stock info */
+.container p b {
+    color: #2e7d32;
+}
 
-        /* ============================================
-           TEXT STYLES
-           ============================================ */
-        .container h2 {
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-            color: var(--core-text);
-        }
+.container p {
+    font-size: 1rem;
+    margin: 0.8rem 0;
+    color: #2d3e2d;
+}
 
-        .container .price {
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--primary);   /* Primary green instead of gold – or you can keep #C6A56A */
-            margin-bottom: 12px;
-        }
+/* Description */
+.container p:last-of-type {
+    margin-bottom: 1.8rem;
+    line-height: 1.6;
+}
 
-        .container p {
-            font-size: 1rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
+/* Add to cart button */
+.container button {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    border: none;
+    color: white;
+    padding: 14px 32px;
+    border-radius: 60px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    font-family: inherit;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
 
-        .container p b {
-            color: var(--core-text);
-            font-weight: 600;
-        }
+.container button::before {
+    content: "🛒";
+    font-size: 1.2rem;
+}
 
-        /* Description block */
-        .container .description {
-            font-style: italic;
-            color: var(--text-muted);
-            margin: 16px 0 24px;
-        }
+.container button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
 
-        /* ============================================
-           ADD TO CART BUTTON (High-contrast CTA)
-           ============================================ */
-        .container button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary);
-            color: var(--clean-base);
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            font-size: 1.05rem;
-            border: none;
-            border-radius: var(--radius-btn);
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            margin-top: 8px;
-        }
+/* ----- CART LINK (outside container) ----- */
+a[href="./Cart.html"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    background: white;
+    color: #2e7d32;
+    padding: 12px 24px;
+    border-radius: 60px;
+    font-weight: 600;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #c8e6c9;
+    margin-top: 0.5rem;
+}
 
-        .container button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-btn);
-        }
+a[href="./Cart.html"]::before {
+    content: "🛍️";
+    font-size: 1rem;
+}
 
-        .container button:active {
-            transform: translateY(0);
-        }
+a[href="./Cart.html"]:hover {
+    background: #2e7d32;
+    color: white;
+    transform: translateY(-2px);
+    border-color: #2e7d32;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
 
-        .container button:focus-visible {
-            outline: 3px dashed var(--primary);
-            outline-offset: 3px;
-        }
+/* ----- RESPONSIVE (mobile) ----- */
+@media (max-width: 680px) {
+    body {
+        padding: 1rem;
+    }
 
-        /* ============================================
-           CART LINK (styled as a secondary button)
-           ============================================ */
-        .cart-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 24px;
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--soft-mint);
-            border-radius: var(--radius-btn);
-            text-decoration: none;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
+    .container {
+        padding: 1.2rem;
+        border-radius: 32px;
+    }
 
-        .cart-link:hover {
-            background-color: var(--soft-mint);
-            color: var(--core-text);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(118, 168, 69, 0.15);
-        }
+    .container h2 {
+        font-size: 1.5rem;
+    }
 
-        /* ============================================
-           RESPONSIVE
-           ============================================ */
-        @media (max-width: 480px) {
-            .container {
-                padding: 24px 20px;
-            }
-            .container h2 {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+    .container .price {
+        font-size: 1.5rem;
+    }
+
+    .container img {
+        max-height: 280px;
+    }
+
+    .container button {
+        padding: 12px 20px;
+    }
+
+    a[href="./Cart.html"] {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small */
+@media (max-width: 480px) {
+    .container h2 {
+        font-size: 1.3rem;
+    }
+
+    .container .price {
+        font-size: 1.2rem;
+    }
+
+    .container p {
+        font-size: 0.9rem;
+    }
+}
+
+/* ----- ANIMATIONS ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom scrollbar */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+body::-webkit-scrollbar-track {
+    background: #e0e8e0;
+    border-radius: 10px;
+}
+body::-webkit-scrollbar-thumb {
+    background: #2e7d32;
+    border-radius: 10px;
+}</style>
 
 </head>
 <body>

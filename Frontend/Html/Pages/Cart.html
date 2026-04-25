@@ -5,47 +5,321 @@
 <title>Cart</title>
 
 <style>
+    /* ==============================================
+   GREENNEST CART PAGE – COMPLETE CSS
+   Modern, plant‑themed, responsive, clean layout
+================================================= */
+
+/* ----- RESET & BASE ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial;
-    background: #f5f5f5;
-    padding: 20px;
+    font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #fafef7 0%, #e8f5e9 100%);
+    color: #1e2f1e;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+}
+
+/* ----- PAGE HEADING ----- */
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2e7d32;
+    margin-bottom: 2rem;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+h2::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #6b8c42, #2e7d32);
+    margin: 8px auto 0;
+    border-radius: 4px;
+}
+
+/* ----- CART CONTAINER (grid) ----- */
+#cartContainer {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Individual cart item card */
+.cart-box {
+    background: white;
+    border-radius: 32px;
+    padding: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.2rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(46, 125, 50, 0.15);
+}
+
+.cart-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Product image */
+.cart-box img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 24px;
+    background: #f5f7f2;
+    border: 1px solid #c8e6c9;
+}
+
+/* Product details area */
+.cart-box > div:nth-child(2) {
+    flex: 2;
+    min-width: 160px;
+}
+
+.cart-box h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1b5e20;
+    margin-bottom: 0.3rem;
+}
+
+.cart-box p {
+    margin: 0.2rem 0;
+    font-size: 0.9rem;
+    color: #4a5b4a;
+}
+
+.cart-box p:first-of-type {
+    font-weight: 500;
+    color: #2e7d32;
+}
+
+/* Quantity and actions area */
+.cart-box > div:last-child {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.cart-box button {
+    border: none;
+    padding: 6px 14px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+/* Increment button (+)
+.inc {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.inc:hover {
+    background: #2e7d32;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* Decrement button (-) */
+.dec {
+    background: #fff3e0;
+    color: #e67e22;
+}
+
+.dec:hover {
+    background: #e67e22;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* Delete button */
+.del {
+    background: #ffefef;
+    color: #c62828;
+}
+
+.del:hover {
+    background: #c62828;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* ----- TOTAL SECTION ----- */
+.total {
+    max-width: 1100px;
+    margin: 1rem auto 1.5rem;
+    text-align: right;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1b5e20;
+    background: white;
+    padding: 1rem 1.8rem;
+    border-radius: 60px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    border: 1px solid #c8e6c9;
+    display: inline-block;
+    width: auto;
+    float: right;
+    clear: both;
+}
+
+/* Clearfix for total alignment */
+body::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* ----- CHECKOUT LINK (styled as button) ----- */
+a[href="./Checkout.html"] {
+    display: inline-block;
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: white;
+    text-decoration: none;
+    padding: 14px 32px;
+    border-radius: 60px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-top: 0.5rem;
+    clear: both;
+    float: right;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+}
+
+a[href="./Checkout.html"]::before {
+    content: "🛍️";
+    font-size: 1.1rem;
+}
+
+a[href="./Checkout.html"]:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* ----- EMPTY / LOGIN MESSAGE STYLING ----- */
+#cartContainer:empty::before,
+#cartContainer:contains("Please login") {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 32px;
+    color: #6b8c42;
+    font-size: 1.2rem;
+    display: block;
+}
+
+/* But the actual message is inserted as text, we style it via a class in JS? 
+   We'll add a fallback: any direct text inside #cartContainer gets centered. */
+#cartContainer {
+    text-align: center;
+}
+
+/* If the container has simple text (like "Please login first"), style it nicely */
+#cartContainer:not(:has(.cart-box)) {
+    background: white;
+    padding: 3rem;
+    border-radius: 32px;
+    color: #2e7d32;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* ----- RESPONSIVE (mobile) ----- */
+@media (max-width: 700px) {
+    body {
+        padding: 1rem;
+    }
+    h2 {
+        font-size: 1.6rem;
+    }
+    .cart-box {
+        flex-direction: column;
+        text-align: center;
+    }
+    .cart-box img {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+    }
+    .cart-box > div:nth-child(2) {
+        text-align: center;
+    }
+    .cart-box > div:last-child {
+        justify-content: center;
+    }
+    .total, a[href="./Checkout.html"] {
+        float: none;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        width: 100%;
+        justify-content: center;
+    }
+    .total {
+        text-align: center;
+        font-size: 1.3rem;
+    }
+}
+
+/* ----- ANIMATIONS ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .cart-box {
-    background: white;
-    padding: 15px;
-    margin-bottom: 10px;
+    animation: fadeSlideUp 0.3s ease;
+}
+
+/* Custom scrollbar */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+body::-webkit-scrollbar-track {
+    background: #e0e8e0;
     border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
 }
-
-.cart-box img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-button {
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.inc { background: green; color: white; }
-.dec { background: orange; color: white; }
-.del { background: red; color: white; }
-
-.total {
-    font-size: 20px;
-    font-weight: bold;
-    margin-top: 20px;
+body::-webkit-scrollbar-thumb {
+    background: #2e7d32;
+    border-radius: 10px;
 }
 </style>
+ 
 </head>
 
 <body>
