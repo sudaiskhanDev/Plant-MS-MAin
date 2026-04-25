@@ -7,179 +7,162 @@
 
 <style>
 body {
-    font-family: Arial;
-    background: #f5f7f5;
+    font-family: Arial, sans-serif;
+    background: #f4f7f4;
+    margin: 0;
     padding: 20px;
 }
 
-h2 {
+h1 {
     color: #2e7d32;
+    text-align: center;
 }
 
-/* TABLE */
+.container {
+    max-width: 1000px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
     margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
 }
 
 th {
     background: #2e7d32;
     color: white;
-    padding: 12px;
 }
 
-td {
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-}
-
-img {
-    width: 55px;
-    height: 55px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-/* BUTTON */
 button {
-    background: #2e7d32;
-    color: white;
-    border: none;
     padding: 6px 12px;
-    border-radius: 5px;
+    border: none;
+    border-radius: 20px;
     cursor: pointer;
+    margin: 2px;
+    font-size: 12px;
 }
 
-button:hover {
-    background: #1b5e20;
+.start { background: #ff9800; color: white; }
+.complete { background: #2e7d32; color: white; }
+
+.status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
 }
 
-/* STATUS */
-select {
-    padding: 5px;
-}
+.pending { background: #fdd835; }
+.in_progress { background: #64b5f6; color: white; }
+.completed { background: #81c784; color: white; }
 
-/* ERROR BOX */
-#error {
-    color: red;
-    margin-top: 10px;
+.empty {
+    text-align: center;
+    color: gray;
+    padding: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Staff Maintenance Dashboard</h2>
+<h1>Staff Maintenance Dashboard</h1>
 
-<div id="error"></div>
+<div class="container">
+
+<h3>My Assigned Tasks</h3>
 
 <table>
 <thead>
 <tr>
     <th>ID</th>
     <th>Plant</th>
-    <th>Image</th>
     <th>Task</th>
     <th>Date</th>
     <th>Status</th>
-    <th>Action</th>
+    <th>Actions</th>
 </tr>
 </thead>
 
-<tbody id="tableBody"></tbody>
+<tbody id="taskBody"></tbody>
 </table>
 
+</div>
+
 <script>
+    const API = "http://127.0.0.1:8000/api";
+const token = localStorage.getItem("token");
 
-const API = "http://127.0.0.1:8000/api";
-let staffId = 1;
+if (!token) {
+    alert("Login required");
+    throw new Error("No token");
+}
 
-// ================= LOAD TASKS =================
 async function loadTasks() {
 
-    try {
-        let res = await fetch(`${API}/maintenances/staff?staff_id=${staffId}`);
-
-        if (!res.ok) {
-            throw new Error("API Error: " + res.status);
+    let res = await fetch(`${API}/maintenances/staff`, {
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Accept": "application/json"
         }
+    });
 
-        let data = await res.json();
+    let data = await res.json();
 
-        let rows = "";
+    console.log(data);
 
-        data.forEach(m => {
-
-            let img = m.plant?.image 
-                ? `http://127.0.0.1:8000/storage/${m.plant.image}`
-                : '';
-
-            rows += `
-            <tr>
-                <td>${m.maintenance_id}</td>
-                <td>${m.plant?.name || 'N/A'}</td>
-                <td>
-                    ${img ? `<img src="${img}">` : 'No Image'}
-                </td>
-                <td>${m.task_type}</td>
-                <td>${m.scheduled_date}</td>
-                <td>
-                    <select id="status-${m.maintenance_id}">
-                        <option value="pending" ${m.status === 'pending' ? 'selected' : ''}>Pending</option>
-                        <option value="in_progress" ${m.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
-                        <option value="completed" ${m.status === 'completed' ? 'selected' : ''}>Completed</option>
-                    </select>
-                </td>
-                <td>
-                    <button onclick="updateStatus(${m.maintenance_id})">Update</button>
-                </td>
-            </tr>
-            `;
-        });
-
-        document.getElementById("tableBody").innerHTML = rows;
-        document.getElementById("error").innerHTML = "";
-
-    } catch (err) {
-        document.getElementById("error").innerHTML = err.message;
-        console.error(err);
+    if (!Array.isArray(data)) {
+        document.getElementById("taskBody").innerHTML =
+            `<tr><td colspan="6">No data / Unauthorized</td></tr>`;
+        return;
     }
+
+    let rows = "";
+
+    data.forEach(t => {
+        rows += `
+        <tr>
+            <td>${t.maintenance_id}</td>
+            <td>${t.plant?.name ?? ''}</td>
+            <td>${t.task_type}</td>
+            <td>${t.scheduled_date}</td>
+            <td>${t.status}</td>
+            <td>
+                <button onclick="updateStatus(${t.maintenance_id}, 'in_progress')">Start</button>
+                <button onclick="updateStatus(${t.maintenance_id}, 'completed')">Done</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("taskBody").innerHTML = rows;
 }
 
-// ================= UPDATE STATUS =================
-async function updateStatus(id) {
+async function updateStatus(id, status) {
 
-    let status = document.getElementById(`status-${id}`).value;
+    await fetch(`${API}/maintenances/status/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token,
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({ status })
+    });
 
-    try {
-        let res = await fetch(`${API}/maintenances/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ status })
-        });
-
-        if (!res.ok) {
-            throw new Error("Update failed");
-        }
-
-        alert("Status Updated");
-        loadTasks();
-
-    } catch (err) {
-        alert(err.message);
-    }
+    loadTasks();
 }
 
-// INIT
 loadTasks();
-
 </script>
 
 </body>
