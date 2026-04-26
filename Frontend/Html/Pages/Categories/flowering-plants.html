@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../../Css/Categories.css">
+    <title>Indoor Plants</title>
+</head>
+
+<body>
+
+<div class="mia-category-page">
+
+    <!-- NAV BAR -->
+    <div class="nav-bar">
+        <h1>GreenNest</h1>
+
+        <div>
+            <a href="../../index.html">Home</a>
+            <a href="../../Pages/Cart.html">Cart</a>
+        </div>
+    </div>
+
+    <!-- CATEGORY NAV -->
+    <div class="category-nav-bar">
+        <nav class="navbar">
+            <ul>
+                <li><a href="./indoor-plants.html">Indoor Plants</a></li>
+                <li><a href="./outdoor-plants.html">Outdoor Plants</a></li>
+                <li><a href="./flowering-plants.html">Flowering Plants</a></li>
+                <li><a href="./medicinal-plants.html">Medicinal Plants</a></li>
+                <li><a href="./fruit-plants.html">Fruit Plants</a></li>
+                <li><a href="./vegetable-plants.html">Vegetable Plants</a></li>
+                <li><a href="./succulents-cactus.html">Succulents / Cactus</a></li>
+                <li><a href="./air-purifying-plants.html">Air Purifying Plants</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- PRODUCT AREA -->
+    <div class="product-display"></div>
+
+    <!-- TEMPLATE -->
+    <template id="product-template">
+        <div class="product-card">
+            <img data-img alt="">
+            <h3 data-name></h3>
+            <p data-price></p>
+            <p data-stock></p>
+        </div>
+    </template>
+
+</div>
+
+<!-- SCRIPT -->
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+
+    const container = document.querySelector(".product-display");
+    const template = document.getElementById("product-template");
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/plants");
+        const data = await res.json();
+
+        // FIXED FILTER (your API uses category_name)
+        const filtered = data.filter(p =>
+            p.category && p.category.category_name === "Flowering Plants"
+        );
+
+        container.replaceChildren();
+
+        filtered.forEach(plant => {
+
+            const clone = template.content.cloneNode(true);
+
+            // fill data
+            clone.querySelector("[data-img]").src =
+                `http://127.0.0.1:8000/storage/${plant.image}`;
+
+            clone.querySelector("[data-name]").textContent = plant.name;
+            clone.querySelector("[data-price]").textContent = `Rs ${plant.price}`;
+            clone.querySelector("[data-stock]").textContent = `Stock: ${plant.stock_quantity}`;
+
+            // 🔥 CLICK → PRODUCT DETAILS PAGE
+            const card = clone.querySelector(".product-card");
+            card.style.cursor = "pointer";
+
+            card.addEventListener("click", function () {
+                window.location.href =
+                    `../Product details.html?id=${plant.plant_id}`;
+            });
+
+            container.appendChild(clone);
+        });
+
+    } catch (error) {
+        console.log("Error:", error);
+    }
+
+});
+</script>
+
+</body>
+</html>

@@ -367,16 +367,19 @@ async function loadCart() {
         }
 
         cartItems.forEach(item => {
-            let price = item.plant.price * item.quantity;
-            totalAmount += price;
 
-            container.innerHTML += `
-                <div class="cart-item">
-                    <span>${item.plant.name} x ${item.quantity}</span>
-                    <span>$${price}</span>
-                </div>
-            `;
-        });
+    if (!item.plant) return; // skip broken records
+
+    let price = (item.plant?.price ?? 0) * (item.quantity ?? 0);
+    totalAmount += price;
+
+    container.innerHTML += `
+        <div class="cart-item">
+            <span>${item.plant?.name ?? 'Deleted Product'} x ${item.quantity}</span>
+            <span>$${price}</span>
+        </div>
+    `;
+});
 
         document.getElementById("totalBox").innerText =
             "Total: $" + totalAmount.toFixed(2);
