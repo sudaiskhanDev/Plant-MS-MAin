@@ -9,4 +9,5 @@ Route::prefix('plants')->group(function () {
     Route::get('/{id}', [PlantController::class, 'show']);
     Route::put('/{id}', [PlantController::class, 'update']);
     Route::delete('/{id}', [PlantController::class, 'destroy']);
+    Route::put('/plants/{id}/stock', [PlantController::class, 'updateStock']);
 });

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../Css/Admin Dashboard.css">
+<title>Inventory List</title>
+ 
+<style>
+    /* ==============================================
+   INVENTORY LIST PAGE – COMPLETE CSS (Sidebar untouched)
+   Green theme, responsive table, stock status badges
+================================================= */
+
+/* ----- MAIN CONTENT AREA (glassmorphism) ----- */
+.dashboard-content {
+    flex: 1;
+    margin: 1rem 2rem 2rem 1rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 36px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    animation: fadeSlideUp 0.4s ease;
+    overflow-x: auto;
+}
+
+/* ----- TABLE STYLES ----- */
+.dashboard-content table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+/* Table header */
+.dashboard-content thead tr {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: white;
+}
+
+.dashboard-content th {
+    padding: 14px 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+/* Table cells */
+.dashboard-content td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #eef3e8;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #1f2a1f;
+}
+
+/* Row striping */
+.dashboard-content tbody tr:nth-child(even) {
+    background-color: #fafefa;
+}
+
+.dashboard-content tbody tr:hover {
+    background: #f5fbf0;
+    transition: 0.2s;
+}
+
+/* ----- PLANT IMAGE ----- */
+.dashboard-content td:nth-child(2) img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #c8e6c9;
+    background: #f9f9f9;
+    transition: transform 0.2s;
+}
+
+.dashboard-content td:nth-child(2) img:hover {
+    transform: scale(1.05);
+}
+
+/* ----- STOCK STATUS BADGES & ROW COLORING ----- */
+/* Out of stock row */
+.dashboard-content tr.out-stock {
+    background-color: #ffefef !important;
+}
+
+.dashboard-content tr.out-stock td:nth-child(7) {
+    background: #c62828;
+    color: white;
+    border-radius: 40px;
+    display: inline-block;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* Low stock row */
+.dashboard-content tr.low-stock {
+    background-color: #fff8e7 !important;
+}
+
+.dashboard-content tr.low-stock td:nth-child(7) {
+    background: #e67e22;
+    color: white;
+    border-radius: 40px;
+    display: inline-block;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* In stock row (default) */
+.dashboard-content tr:not(.out-stock):not(.low-stock) td:nth-child(7) {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 40px;
+    display: inline-block;
+    padding: 4px 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* Price column */
+.dashboard-content td:nth-child(4) {
+    font-weight: 700;
+    color: #2e7d32;
+}
+
+/* Stock quantity column */
+.dashboard-content td:nth-child(5) {
+    font-weight: 600;
+}
+
+/* Category column */
+.dashboard-content td:nth-child(6) {
+    font-style: italic;
+    color: #6b8c42;
+}
+
+/* ----- RESPONSIVE (mobile) ----- */
+@media (max-width: 850px) {
+    .dashboard-content {
+        margin: 1rem;
+        padding: 1rem;
+        overflow-x: auto;
+    }
+    .dashboard-content table {
+        min-width: 700px;
+    }
+    .dashboard-content th,
+    .dashboard-content td {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+    }
+    .dashboard-content td:nth-child(2) img {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard-content {
+        padding: 0.8rem;
+    }
+}
+
+/* ----- ANIMATION ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-admin-dashboard">
+        
+        <!-- SIDEBAR -->
+    <div class="side-bar">
+        <h1>Admin Dashboard</h1>
+
+        <div class="pages-links">
+                <ul>
+                    <a href="../Admin Dashboard.html">Dashboard</a>
+                     <a href="./App Plants.html">Add Plants</a>
+                     <a href="./Category.html">Categories</a>
+                     <a href="./Inventory.html">Inventory</a>
+                    <a href="./Users.html">Users</a>
+                    <a href="./Orders.html">Orders</a>
+                    <a href="./Order Details.html">Order Details</a>
+                    <a href="./Payment.html">Payment</a>
+                    <a href="./Maintenance.html">Maintenance</a>
+                    <a href="./Supplier.html">Supplier</a>
+                    <a href="./supplier_order.html">Supplier Order</a>
+                    <a href="./Notification.html">Notification</a>
+                    <a href="./Report.html">Report</a>
+                    
+                   
+                    
+                </ul>
+            </div>
+    </div>
+        
+       <div class="dashboard-content">
+            
+        
+           
+<table>
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Image</th>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Stock</th>
+    <th>Category</th>
+    <th>Status</th>
+</tr>
+</thead>
+
+<tbody id="inventoryTable"></tbody>
+</table>
+             
+        </div>
+        
+    </div>
+
+
+<script>
+
+const API = "http://127.0.0.1:8000/api/plants";
+
+loadInventory();
+
+/* ================= LOAD INVENTORY ================= */
+async function loadInventory() {
+
+    try {
+        const res = await fetch(API);
+        const data = await res.json();
+
+        let rows = "";
+
+        data.forEach(p => {
+
+            let status = "";
+            let rowClass = "";
+
+            if (p.stock_quantity <= 0) {
+                status = "Out of Stock";
+                rowClass = "out-stock";
+            } 
+            else if (p.stock_quantity <= 20) {
+                status = "Low Stock";
+                rowClass = "low-stock";
+            } 
+            else {
+                status = "In Stock";
+            }
+
+            rows += `
+            <tr class="${rowClass}">
+                <td>${p.plant_id}</td>
+
+                <td>
+                    ${p.image 
+                        ? `<img src="http://127.0.0.1:8000/storage/${p.image}">` 
+                        : `No Image`
+                    }
+                </td>
+
+                <td>${p.name}</td>
+                <td>$${p.price}</td>
+                <td>${p.stock_quantity}</td>
+                <td>${p.category?.category_name || 'N/A'}</td>
+                <td>${status}</td>
+            </tr>
+            `;
+        });
+
+        document.getElementById("inventoryTable").innerHTML = rows;
+
+    } catch (error) {
+        console.error("LOAD ERROR:", error);
+
+        document.getElementById("inventoryTable").innerHTML =
+            `<tr><td colspan="7">Failed to load data</td></tr>`;
+    }
+}
+
+</script>
+
+</body>
+</html>

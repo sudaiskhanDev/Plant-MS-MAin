@@ -76,4 +76,22 @@ class PlantController extends Controller
 
         return response()->json(['message' => 'Deleted']);
     }
+
+    public function updateStock(Request $request, $id)
+{
+    $request->validate([
+        'stock_quantity' => 'required|integer|min:0'
+    ]);
+
+    $plant = Plant::findOrFail($id);
+
+    $plant->update([
+        'stock_quantity' => $request->stock_quantity
+    ]);
+
+    return response()->json([
+        'message' => 'Stock updated successfully',
+        'data' => $plant
+    ]);
+}
 }

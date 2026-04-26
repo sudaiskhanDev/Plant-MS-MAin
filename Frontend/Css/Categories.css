@@ -1,0 +1,257 @@
+/* ==============================================
+   GREENNEST CATEGORY PAGE – COMPLETE CSS
+   Modern plant theme, glassmorphism, responsive
+================================================= */
+
+/* ----- RESET & BASE ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #fafef7 0%, #e8f5e9 100%);
+    color: #1e2f1e;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+.mia-category-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+/* ========== TOP NAVIGATION BAR ========== */
+.nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    padding: 0.8rem 2rem;
+    border-radius: 60px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(46, 125, 50, 0.15);
+}
+
+.nav-bar h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2e7d32, #6b8c42);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-bar h1::before {
+    content: "🌿";
+    font-size: 1.9rem;
+    background: none;
+    color: #2e7d32;
+}
+
+.nav-bar div {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-bar a {
+    text-decoration: none;
+    font-weight: 500;
+    color: #1e2f1e;
+    font-size: 1rem;
+    padding: 0.4rem 0;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.nav-bar a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #2e7d32, #6b8c42);
+    transition: width 0.25s;
+}
+
+.nav-bar a:hover {
+    color: #2e7d32;
+}
+
+.nav-bar a:hover::after {
+    width: 100%;
+}
+
+/* ========== CATEGORY NAVIGATION BAR ========== */
+.category-nav-bar {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    border-radius: 60px;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    animation: slideDown 0.4s ease;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul li a {
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    transition: all 0.3s ease;
+    background: transparent;
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar ul li a::before {
+    content: "🌿";
+    position: absolute;
+    left: -30px;
+    opacity: 0;
+    transition: all 0.3s;
+    font-size: 1rem;
+}
+
+.navbar ul li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    padding-left: 1.8rem;
+}
+
+.navbar ul li a:hover::before {
+    left: 12px;
+    opacity: 1;
+}
+
+/* Optional active state */
+.navbar ul li a.active {
+    background: #c8e6c9;
+    color: #1b5e20;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.navbar ul li a.active::before {
+    content: "🌱";
+    left: 12px;
+    opacity: 1;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 850px) {
+    .mia-category-page {
+        padding: 1rem;
+    }
+    .nav-bar {
+        padding: 0.8rem 1.2rem;
+        border-radius: 40px;
+    }
+    .nav-bar h1 {
+        font-size: 1.5rem;
+    }
+    .nav-bar h1::before {
+        font-size: 1.5rem;
+    }
+    .category-nav-bar {
+        border-radius: 40px;
+        padding: 0.5rem;
+    }
+    .navbar ul li a {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+    }
+    .navbar ul li a:hover {
+        padding-left: 1.2rem;
+    }
+    .navbar ul li a:hover::before {
+        font-size: 0.8rem;
+        left: 6px;
+    }
+}
+
+@media (max-width: 600px) {
+    .navbar ul {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 0.3rem;
+        -webkit-overflow-scrolling: touch;
+    }
+    .navbar ul::-webkit-scrollbar {
+        height: 3px;
+    }
+    .navbar ul::-webkit-scrollbar-track {
+        background: #c8e6c9;
+        border-radius: 10px;
+    }
+    .navbar ul::-webkit-scrollbar-thumb {
+        background: #1b5e20;
+        border-radius: 10px;
+    }
+    .navbar ul li a {
+        white-space: nowrap;
+    }
+    .nav-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+    .nav-bar div {
+        justify-content: center;
+    }
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom scrollbar */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+body::-webkit-scrollbar-track {
+    background: #e0e8e0;
+    border-radius: 10px;
+}
+body::-webkit-scrollbar-thumb {
+    background: #2e7d32;
+    border-radius: 10px;
+}
