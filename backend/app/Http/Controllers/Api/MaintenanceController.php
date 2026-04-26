@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Maintenance;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notification;
 
 class MaintenanceController extends Controller
 {
@@ -29,12 +30,26 @@ class MaintenanceController extends Controller
         ]);
 
         $maintenance = Maintenance::create([
-            'plant_id' => $request->plant_id,
-            'admin_staff_id' => $request->admin_staff_id,
-            'task_type' => $request->task_type,
-            'scheduled_date' => $request->scheduled_date,
-            'status' => $request->status,
-        ]);
+    'plant_id' => $request->plant_id,
+    'admin_staff_id' => $request->admin_staff_id,
+    'task_type' => $request->task_type,
+    'scheduled_date' => $request->scheduled_date,
+    'status' => $request->status,
+]);
+
+// 🔥 AUTO NOTIFICATION (ADD THIS)
+Notification::create([
+    'admin_staff_id' => $request->admin_staff_id,
+    'message' => 'New task assigned: ' . $request->task_type,
+    'type' => 'maintenance',
+    'date' => now()
+]);
+
+return response()->json([
+    'message' => 'Maintenance created successfully',
+    'data' => $maintenance
+], 201);
+
 
         return response()->json([
             'message' => 'Maintenance created successfully',
@@ -105,7 +120,7 @@ class MaintenanceController extends Controller
 }
 
     // 🔄 STAFF STATUS UPDATE (FIXED)
-   public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, $id)
 {
     $staff = auth('admin')->user();
 
@@ -121,11 +136,45 @@ class MaintenanceController extends Controller
         'status' => $request->status
     ]);
 
+    // 🔥 UPDATE NOTIFICATION ALSO
+    $notification = \App\Models\Notification::where('admin_staff_id', $staff->admin_staff_id)
+        ->where('type', 'maintenance')
+        ->latest()
+        ->first();
+
+    if ($notification) {
+        $notification->update([
+            'message' => "Task #{$maintenance->maintenance_id} is now {$request->status}",
+            'date' => now()
+        ]);
+    }
+
     return response()->json([
         'message' => 'Status updated successfully',
         'data' => $maintenance
     ]);
 }
+//    public function updateStatus(Request $request, $id)
+// {
+//     $staff = auth('admin')->user();
+
+//     if (!$staff) {
+//         return response()->json(['message' => 'Unauthorized'], 401);
+//     }
+
+//     $maintenance = Maintenance::where('maintenance_id', $id)
+//         ->where('admin_staff_id', $staff->admin_staff_id)
+//         ->firstOrFail();
+
+//     $maintenance->update([
+//         'status' => $request->status
+//     ]);
+
+//     return response()->json([
+//         'message' => 'Status updated successfully',
+//         'data' => $maintenance
+//     ]);
+// }
 }
 // namespace App\Http\Controllers\Api;
 

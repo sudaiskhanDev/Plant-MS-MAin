@@ -1,86 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Staff Maintenance Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../Css/Staff Dashboard.css">
+    
+    <style>
+        /* ==============================================
+   STAFF MAINTENANCE DASHBOARD – COMPLETE CSS
+   (Sidebar untouched – only content area styled)
+   Green theme, glassmorphism, responsive table
+================================================= */
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f7f4;
+/* ----- RESET & BASE ----- */
+* {
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-h1 {
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #fafef7 0%, #e8f5e9 100%);
+    color: #1e2f1e;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 0;
+}
+
+/* Optional: style the standalone h1 at the top (if not inside sidebar) */
+body > h1:first-child {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
     color: #2e7d32;
-    text-align: center;
+    margin: 1.5rem 0 0;
+    letter-spacing: -0.3px;
+    position: relative;
 }
 
-.container {
-    max-width: 1000px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+body > h1:first-child::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #6b8c42, #2e7d32);
+    margin: 8px auto 0;
+    border-radius: 4px;
 }
 
-table {
+/* ========== MAIN LAYOUT (preserves sidebar, but we style only dashboard-content) ========== */
+.main-admin-dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR – intentionally untouched, but we keep the original styles */
+.side-bar {
+    /* Your existing sidebar styles remain – we do not override them */
+    /* Just ensure no interference */
+}
+
+/* ========== DASHBOARD CONTENT (the area we fully style) ========== */
+.dashboard-content {
+    flex: 1;
+    margin: 1rem 2rem 2rem 1rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 36px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    animation: fadeSlideUp 0.4s ease;
+    overflow-x: auto;
+}
+
+/* Heading inside content */
+.dashboard-content h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #1b5e20;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #6b8c42;
+    padding-left: 1rem;
+}
+
+/* ----- TABLE STYLES (modern, clean) ----- */
+.dashboard-content table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 }
 
-th, td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background: #2e7d32;
+.dashboard-content thead tr {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
     color: white;
 }
 
-button {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    margin: 2px;
-    font-size: 12px;
-}
-
-.start { background: #ff9800; color: white; }
-.complete { background: #2e7d32; color: white; }
-
-.status {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-}
-
-.pending { background: #fdd835; }
-.in_progress { background: #64b5f6; color: white; }
-.completed { background: #81c784; color: white; }
-
-.empty {
+.dashboard-content th {
+    padding: 14px 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     text-align: center;
-    color: gray;
-    padding: 20px;
 }
-</style>
+
+.dashboard-content td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #eef3e8;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #1f2a1f;
+}
+
+/* Row striping & hover */
+.dashboard-content tbody tr:nth-child(even) {
+    background-color: #fafefa;
+}
+.dashboard-content tbody tr:hover {
+    background: #f5fbf0;
+    transition: 0.2s;
+}
+
+/* Status column – badge style */
+.dashboard-content td:nth-child(5) {
+    font-weight: 600;
+    text-transform: capitalize;
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 40px;
+    background: #f0f2f0;
+    color: #2c3e2c;
+}
+
+/* Optional dynamic status colors (they will appear based on text) */
+.dashboard-content td:nth-child(5):contains("pending") {
+    background: #fff3e0;
+    color: #e67e22;
+}
+.dashboard-content td:nth-child(5):contains("in_progress") {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+.dashboard-content td:nth-child(5):contains("completed") {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* ----- ACTION BUTTONS (Start / Done) ----- */
+.dashboard-content td:last-child button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 40px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0 4px;
+    font-family: inherit;
+}
+
+/* Start button (in_progress) */
+.dashboard-content td:last-child button:first-child {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+.dashboard-content td:last-child button:first-child:hover {
+    background: #1976d2;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Done button (completed) */
+.dashboard-content td:last-child button:last-child {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+.dashboard-content td:last-child button:last-child:hover {
+    background: #2e7d32;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* ----- RESPONSIVE (mobile) ----- */
+@media (max-width: 850px) {
+    .dashboard-content {
+        margin: 1rem;
+        padding: 1.2rem;
+        overflow-x: auto;
+    }
+    .dashboard-content table {
+        min-width: 700px;
+    }
+    .dashboard-content h3 {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard-content {
+        padding: 1rem;
+    }
+    .dashboard-content h3 {
+        font-size: 1.2rem;
+    }
+    body > h1:first-child {
+        font-size: 1.5rem;
+    }
+}
+
+/* ----- ANIMATION ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom scrollbar */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+body::-webkit-scrollbar-track {
+    background: #e0e8e0;
+    border-radius: 10px;
+}
+body::-webkit-scrollbar-thumb {
+    background: #2e7d32;
+    border-radius: 10px;
+}
+    </style>
+    <title>Document</title>
 </head>
-
 <body>
+     <div class="main-admin-dashboard">
+        
+        <!-- Sidebar containing navigation links for admin modules -->
+        <div class="side-bar">
+            <h1>Admin Dashboard</h1>
 
-<h1>Staff Maintenance Dashboard</h1>
-
-<div class="container">
-
-<h3>My Assigned Tasks</h3>
+            <div class="pages-links">
+                <ul>
+                    <a href="#">Categories</a>
+                </ul>
+            </div>
+        </div>
+        
+       <div class="dashboard-content">
+            
+        <h3>My Assigned Tasks</h3>
 
 <table>
 <thead>
@@ -96,8 +273,14 @@ button {
 
 <tbody id="taskBody"></tbody>
 </table>
+           
+             
+        </div>
+        
+    </div>
+ 
 
-</div>
+ 
 
 <script>
     const API = "http://127.0.0.1:8000/api";
@@ -159,7 +342,13 @@ async function updateStatus(id, status) {
         body: JSON.stringify({ status })
     });
 
+    // 🔥 refresh maintenance list
     loadTasks();
+
+    // ❗ OPTIONAL: refresh notifications ONLY if function exists
+    if (typeof loadNotifications === "function") {
+        loadNotifications();
+    }
 }
 
 loadTasks();

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Notifications</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7f4;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #2e7d32;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card {
+    padding: 15px;
+    border-left: 5px solid #2e7d32;
+    margin-bottom: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.card h3 {
+    margin: 0;
+}
+
+.card small {
+    color: gray;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.maintenance { background: #64b5f6; color: white; }
+.order { background: #ff9800; color: white; }
+.stock { background: #81c784; color: white; }
+
+.empty {
+    text-align: center;
+    color: gray;
+    padding: 20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>My Notifications</h1>
+
+<div class="container" id="notificationBox">
+    <!-- notifications load here -->
+</div>
+
+<script>
+
+const API = "http://127.0.0.1:8000/api";
+const token = localStorage.getItem("token");
+
+// ❌ no token check
+if (!token) {
+    alert("Login required!");
+    throw new Error("No token found");
+}
+
+// ================= LOAD NOTIFICATIONS =================
+async function loadNotifications() {
+
+    try {
+        let res = await fetch(`${API}/notifications/my`, {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            }
+        });
+
+        let data = await res.json();
+
+        console.log("NOTIFICATIONS:", data);
+
+        let html = "";
+
+        if (!Array.isArray(data) || data.length === 0) {
+            document.getElementById("notificationBox").innerHTML =
+                `<div class="empty">No Notifications Found</div>`;
+            return;
+        }
+
+        data.forEach(n => {
+            html += `
+            <div class="card">
+                <h3>${n.message}</h3>
+                <small>Date: ${n.date}</small><br>
+                <span class="badge ${n.type}">${n.type}</span>
+            </div>
+            `;
+        });
+
+        document.getElementById("notificationBox").innerHTML = html;
+
+    } catch (error) {
+        console.error("ERROR:", error);
+
+        document.getElementById("notificationBox").innerHTML =
+            `<div class="empty">Failed to load notifications</div>`;
+    }
+}
+
+// INIT
+loadNotifications();
+
+</script>
+
+</body>
+</html>
