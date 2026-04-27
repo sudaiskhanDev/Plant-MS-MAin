@@ -5,6 +5,278 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../Css/Admin Dashboard.css">
     <title>Admin Dashboard - Notifications</title>
+
+    <style>
+        /* ==============================================
+   NOTIFICATION MANAGEMENT (Sidebar untouched)
+   Glassmorphism, green theme, responsive table
+================================================= */
+
+/* ----- MAIN CONTENT AREA ----- */
+.dashboard-content {
+    flex: 1;
+    margin: 1rem 2rem 2rem 1rem;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 36px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    animation: fadeSlideUp 0.4s ease;
+    overflow-x: auto;
+}
+
+.dashboard-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin-bottom: 1.8rem;
+    border-left: 5px solid #6b8c42;
+    padding-left: 1rem;
+    display: inline-block;
+}
+
+/* ----- FORM SECTION (Add/Update) ----- */
+.dashboard-content > div:first-of-type {
+    background: white;
+    border-radius: 28px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-content > div:first-of-type:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-content h3 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #1b5e20;
+    margin-bottom: 1.2rem;
+    border-left: 3px solid #6b8c42;
+    padding-left: 0.8rem;
+}
+
+/* Form layout – flex wrap */
+.dashboard-content > div:first-of-type {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.dashboard-content input,
+.dashboard-content select {
+    flex: 1 1 180px;
+    padding: 12px 16px;
+    border: 1px solid #d0e2c0;
+    border-radius: 48px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #fefef7;
+    transition: all 0.2s;
+}
+
+.dashboard-content input:focus,
+.dashboard-content select:focus {
+    outline: none;
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+    background: white;
+}
+
+.dashboard-content input::placeholder {
+    color: #9bbf8f;
+}
+
+/* Save button */
+.dashboard-content button {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    border: none;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 48px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.dashboard-content button:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Horizontal rule */
+hr {
+    margin: 2rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c8e6c9, transparent);
+}
+
+/* ----- TABLE STYLES ----- */
+.dashboard-content table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-content thead tr {
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
+    color: white;
+}
+
+.dashboard-content th {
+    padding: 14px 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.dashboard-content td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #eef3e8;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #1f2a1f;
+}
+
+/* Row striping & hover */
+.dashboard-content tbody tr:nth-child(even) {
+    background-color: #fafefa;
+}
+.dashboard-content tbody tr:hover {
+    background: #f5fbf0;
+    transition: 0.2s;
+}
+
+/* Message column – allow wrapping */
+.dashboard-content td:nth-child(3) {
+    max-width: 300px;
+    word-break: break-word;
+    text-align: left;
+}
+
+/* Type column badge */
+.dashboard-content td:nth-child(4) {
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 40px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 0.75rem;
+}
+
+/* Type-specific colors (optional) */
+.dashboard-content td:nth-child(4):contains("stock") {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+.dashboard-content td:nth-child(4):contains("maintenance") {
+    background: #fff3e0;
+    color: #e67e22;
+}
+.dashboard-content td:nth-child(4):contains("order") {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Action buttons (Edit / Delete) */
+.dashboard-content td:last-child button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 40px;
+    font-weight: 500;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0 4px;
+    font-family: inherit;
+}
+
+/* Edit button */
+.dashboard-content td:last-child button:first-child {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+.dashboard-content td:last-child button:first-child:hover {
+    background: #2e7d32;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Delete button */
+.dashboard-content td:last-child button:last-child {
+    background: #ffefef;
+    color: #c62828;
+}
+.dashboard-content td:last-child button:last-child:hover {
+    background: #c62828;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* ----- RESPONSIVE (mobile) ----- */
+@media (max-width: 850px) {
+    .dashboard-content {
+        margin: 1rem;
+        padding: 1.2rem;
+    }
+    .dashboard-content > div:first-of-type {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .dashboard-content input,
+    .dashboard-content select,
+    .dashboard-content button {
+        width: 100%;
+    }
+    .dashboard-content table {
+        min-width: 700px;
+    }
+    .dashboard-content th,
+    .dashboard-content td {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard-content h2 {
+        font-size: 1.5rem;
+    }
+    .dashboard-content h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* ----- ANIMATION ----- */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    </style>
 </head>
 <body>
 

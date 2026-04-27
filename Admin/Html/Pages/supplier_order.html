@@ -438,10 +438,14 @@ function loadSupplierOrders() {
 
                     <!-- PLANT NAME + IMAGE -->
                     <td>
-                        ${order.plant ? order.plant.name : 'N/A'}
-                        <br>
-                        <img src="http://127.0.0.1:8000/storage/${order.plant.image}" width="40" height="40">
-                    </td>
+    ${order.plant ? `
+        ${order.plant.name}
+        <br>
+        <img src="http://127.0.0.1:8000/storage/${order.plant.image}" width="40" height="40">
+    ` : `
+        N/A
+    `}
+</td>
 
                     <td>${order.quantity}</td>
                     <td>${order.delivery_status}</td>
