@@ -31,8 +31,12 @@ class CheckoutController extends Controller
         ]);
 
         $cartItems = Cart::with('plant')
-            ->where('user_id', $user->user_id)
-            ->get();
+    ->where('user_id', $user->user_id)
+    ->whereHas('plant') // 🔥 THIS LINE FIXES EVERYTHING
+    ->get();
+        // $cartItems = Cart::with('plant')
+        //     ->where('user_id', $user->user_id)
+        //     ->get();
 
         if ($cartItems->isEmpty()) {
             return response()->json(['message' => 'Cart is empty'], 400);
