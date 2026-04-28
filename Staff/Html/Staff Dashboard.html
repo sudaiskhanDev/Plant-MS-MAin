@@ -4,40 +4,362 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../Css/Staff Dashboard.css">
-    
-    <title>Document</title>
+    <title>Staff Dashboard | GreenNest</title>
+    <style>
+        /* Additional styles for dashboard-data content */
+        .dashboard-data {
+            padding: 1rem 0;
+        }
+
+        /* Stats cards grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            border: 1px solid #e0f0e0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 28px rgba(0,0,0,0.08);
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #5a8f5a;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #1e4620;
+            line-height: 1.2;
+        }
+
+        .stat-unit {
+            font-size: 0.9rem;
+            font-weight: normal;
+            color: #6f9e6f;
+        }
+
+        /* Section headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin: 2rem 0 1rem 0;
+            border-bottom: 2px solid #cfe3cf;
+            padding-bottom: 0.5rem;
+        }
+        .section-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c5e2c;
+            margin: 0;
+        }
+        .section-link {
+            font-size: 0.8rem;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+
+        /* Tables inside dashboard */
+        .mini-table {
+            background: white;
+            border-radius: 20px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .mini-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .mini-table th {
+            background: #f0f7ea;
+            color: #2c5e2c;
+            padding: 12px 8px;
+            font-weight: 600;
+        }
+        .mini-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eaf3e5;
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge.low { background: #ffecb3; color: #bf6f00; }
+        .badge.out { background: #ffe6e5; color: #c62828; }
+        .badge.ok { background: #e0f2e0; color: #2e7d32; }
+        .badge.pending { background: #fff3e0; color: #e67e22; }
+        .badge.in_progress { background: #e3f2fd; color: #1976d2; }
+        .badge.completed { background: #e8f5e9; color: #2e7d32; }
+
+        .notification-item {
+            background: #fefef7;
+            border-left: 4px solid #6b8c42;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 16px;
+            transition: 0.1s;
+        }
+        .notification-item small {
+            color: #7c9c7c;
+        }
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: #86a788;
+            background: #fafefa;
+            border-radius: 24px;
+        }
+        button.small-action {
+            background: none;
+            border: 1px solid #bdd4bd;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.small-action:hover {
+            background: #2e7d32;
+            color: white;
+            border-color: #2e7d32;
+        }
+        @media (max-width: 700px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .dashboard-content { margin: 0.5rem; padding: 1rem; }
+        }
+    </style>
 </head>
 <body>
-     <div class="main-admin-dashboard">
-        
-        <!-- Sidebar containing navigation links for admin modules -->
+    <div class="main-admin-dashboard">
+        <!-- Sidebar -->
         <div class="side-bar">
             <h1>Admin Dashboard</h1>
-
             <div class="pages-links">
                 <ul>
+                    <a href="./Staff Dashboard.html">Dashboard</a>
                     <a href="./Pages/Maintenence.html">Maintenence</a>
                     <a href="./Pages/Notification.html">Notifications</a>
                     <a href="./Pages/Inventory.html">Inventory</a>
-                    
                 </ul>
             </div>
         </div>
         
-       <div class="dashboard-content">
+        <div class="dashboard-content">
+            <div class="nav-bar">
+                <h1>GreenNest</h1>
+                <button onclick="logout()">Logout</button>
+            </div>
             
-        <div class="nav-bar">
-            <h1>GreenNest</h1>
-            <button onclick="logout()">Logout</button>
-            
+            <!-- DYNAMIC DASHBOARD CONTENT -->
+            <div class="dashboard-data" id="dashboardData">
+                <!-- Loading indicator -->
+                <div class="empty-message">Loading dashboard data...</div>
+            </div>
         </div>
-        
-           
-             
-        </div>
-        
     </div>
 
-    <script src="../Js/Staff.js"></script>
+    <script>
+        // ---------- API Configuration ----------
+        const API_BASE = "http://127.0.0.1:8000/api";
+        const token = localStorage.getItem("token");
+
+        // ---------- Helper: fetch with auth ----------
+        async function authFetch(endpoint) {
+            const res = await fetch(`${API_BASE}${endpoint}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Accept": "application/json"
+                }
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        }
+
+        // ---------- Logout ----------
+        window.logout = function() {
+            localStorage.removeItem("token");
+            alert("Logged out successfully.");
+            window.location.href = "../../login.html";  // adjust path as needed
+        };
+
+        // ---------- Load Full Dashboard ----------
+        async function loadDashboard() {
+            const container = document.getElementById("dashboardData");
+            if (!token) {
+                container.innerHTML = `<div class="empty-message">⚠️ No login token found. Please log in again.</div>`;
+                return;
+            }
+
+            try {
+                // Fetch all three data sources in parallel
+                const [plantsData, tasksData, notificationsData] = await Promise.all([
+                    authFetch("/plants").catch(err => { console.warn("Plants error", err); return []; }),
+                    authFetch("/maintenances/staff").catch(err => { console.warn("Tasks error", err); return []; }),
+                    authFetch("/notifications/my").catch(err => { console.warn("Notif error", err); return []; })
+                ]);
+
+                // Ensure arrays
+                const plants = Array.isArray(plantsData) ? plantsData : [];
+                const tasks = Array.isArray(tasksData) ? tasksData : [];
+                const notifications = Array.isArray(notificationsData) ? notificationsData : [];
+
+                // ----- Stats calculations -----
+                const totalPlants = plants.length;
+                const lowStockCount = plants.filter(p => p.stock_quantity > 0 && p.stock_quantity <= 5).length;
+                const outOfStockCount = plants.filter(p => p.stock_quantity === 0).length;
+                const pendingTasks = tasks.filter(t => t.status !== 'completed').length;
+                const unreadNotif = notifications.length; // assuming all are "unread" style
+
+                // ----- Low stock items (top 5) -----
+                const lowStockPlants = plants
+                    .filter(p => p.stock_quantity <= 5)
+                    .sort((a,b) => a.stock_quantity - b.stock_quantity)
+                    .slice(0, 5);
+
+                // ----- Recent tasks (last 5, by scheduled_date descending) -----
+                const recentTasks = [...tasks]
+                    .sort((a,b) => new Date(b.scheduled_date) - new Date(a.scheduled_date))
+                    .slice(0, 5);
+
+                // ----- Latest notifications (last 4) -----
+                const latestNotif = notifications.slice(0, 4);
+
+                // ----- Build HTML -----
+                let html = `
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-title">🌿 TOTAL PLANTS</div><div class="stat-number">${totalPlants}</div></div>
+                        <div class="stat-card"><div class="stat-title">⚠️ LOW STOCK (≤5)</div><div class="stat-number">${lowStockCount} <span class="stat-unit">+ ${outOfStockCount} out of stock</span></div></div>
+                        <div class="stat-card"><div class="stat-title">🔧 PENDING TASKS</div><div class="stat-number">${pendingTasks}</div></div>
+                        <div class="stat-card"><div class="stat-title">📬 NOTIFICATIONS</div><div class="stat-number">${unreadNotif}</div></div>
+                    </div>
+                `;
+
+                // ----- Low Stock Section -----
+                html += `<div class="section-header"><h2>📉 Low Stock Alert</h2><a href="./Pages/Inventory.html" class="section-link">View all →</a></div>`;
+                if (lowStockPlants.length === 0) {
+                    html += `<div class="empty-message" style="background:#fff; text-align:left;">✅ No low stock items. All plants are well stocked.</div>`;
+                } else {
+                    html += `<div class="mini-table"><table>
+                        <thead><tr><th>Plant</th><th>Stock</th><th>Status</th></tr></thead>
+                        <tbody>`;
+                    lowStockPlants.forEach(p => {
+                        let statusClass = p.stock_quantity === 0 ? "out" : "low";
+                        let statusText = p.stock_quantity === 0 ? "OUT OF STOCK" : "LOW STOCK";
+                        html += `<tr>
+                            <td>${escapeHtml(p.name)}</td>
+                            <td><strong>${p.stock_quantity}</strong></td>
+                            <td><span class="badge ${statusClass}">${statusText}</span></td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table></div>`;
+                }
+
+                // ----- My Recent Tasks -----
+                html += `<div class="section-header"><h2>🛠️ My Assigned Tasks (recent)</h2><a href="./Pages/Maintenence.html" class="section-link">Manage tasks →</a></div>`;
+                if (recentTasks.length === 0) {
+                    html += `<div class="empty-message">No tasks assigned.</div>`;
+                } else {
+                    html += `<div class="mini-table"><table>
+                        <thead><tr><th>Task</th><th>Plant</th><th>Date</th><th>Status</th><th>Quick Action</th></tr></thead>
+                        <tbody>`;
+                    for (const task of recentTasks) {
+                        const statusClass = task.status === 'completed' ? 'completed' : (task.status === 'in_progress' ? 'in_progress' : 'pending');
+                        html += `<tr>
+                            <td>${escapeHtml(task.task_type)}</td>
+                            <td>${escapeHtml(task.plant?.name || '—')}</td>
+                            <td>${task.scheduled_date || '—'}</td>
+                            <td><span class="badge ${statusClass}">${task.status}</span></td>
+                            <td>
+                                ${task.status !== 'completed' ? `<button class="small-action" onclick="quickUpdateTask(${task.maintenance_id}, 'in_progress')">Start</button>
+                                <button class="small-action" onclick="quickUpdateTask(${task.maintenance_id}, 'completed')">Done</button>` : '✔️ Completed'}
+                            </td>
+                        </tr>`;
+                    }
+                    html += `</tbody></table></div>`;
+                }
+
+                // ----- Latest Notifications -----
+                html += `<div class="section-header"><h2>🔔 Recent Notifications</h2><a href="./Pages/Notification.html" class="section-link">See all →</a></div>`;
+                if (latestNotif.length === 0) {
+                    html += `<div class="empty-message">No notifications yet.</div>`;
+                } else {
+                    html += `<div>`;
+                    latestNotif.forEach(n => {
+                        let typeClass = n.type === 'maintenance' ? 'badge pending' : (n.type === 'order' ? 'badge low' : 'badge ok');
+                        html += `<div class="notification-item">
+                            <div style="font-weight:500;">📢 ${escapeHtml(n.message)}</div>
+                            <small>📅 ${n.date || 'Recent'} &nbsp; <span class="${typeClass}" style="background:#eef2ee; color:#2e5c2e; font-size:0.7rem;">${n.type || 'info'}</span></small>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                }
+
+                container.innerHTML = html;
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div class="empty-message">❌ Failed to load dashboard. Please check your connection or login again.</div>`;
+            }
+        }
+
+        // Helper: quick update task status (refresh dashboard after)
+        window.quickUpdateTask = async function(id, newStatus) {
+            try {
+                const res = await fetch(`${API_BASE}/maintenances/status/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (!res.ok) throw new Error("Update failed");
+                // Refresh dashboard after update
+                loadDashboard();
+                // Also if there is any notification refresh, it will be reloaded
+            } catch (error) {
+                alert("Could not update task status. " + error.message);
+            }
+        };
+
+        // XSS protection
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+
+        // Initial load
+        loadDashboard();
+    </script>
 </body>
 </html>

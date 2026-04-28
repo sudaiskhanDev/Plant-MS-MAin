@@ -6,231 +6,216 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
     
     <style>
-        /* ==============================================
-   LOGIN PAGE - PLANT NURSERY THEME
-   Fresh green, glassmorphism, responsive
-================================================= */
+        /* ============================================
+   VIBRANT & FRESH LOGIN STYLES
+   Primary Lime: #6CC551 | Radial Gradient Background
+   Glassmorphism card | Pill button | Modern Geometric
+   ============================================ */
 
-/* ----- RESET & BASE ----- */
+/* ---------- IMPORT GOOGLE FONTS ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* ---------- CSS VARIABLES ---------- */
+:root {
+  --lime-green: #6CC551;
+  --lime-glow: rgba(108, 197, 81, 0.3);
+  --gradient-bg: radial-gradient(circle at top right, #D4EFDF, #ffffff);
+  --text-heading: #1A1A1A;
+  --text-body: #707070;
+  --error-red: #E53E3E;
+  --card-bg: #F8FDF9;
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.7);
+  --shadow-green: 0px 10px 20px rgba(108, 197, 81, 0.25);
+  --shadow-hover: 0px 15px 25px rgba(108, 197, 81, 0.3);
+  --radius-pill: 50px;
+  --radius-card: 28px;
+  --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+/* ---------- GLOBAL RESET ---------- */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1.5rem;
-    position: relative;
-    overflow-x: hidden;
+  font-family: 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+  background: var(--gradient-bg);
+  color: var(--text-body);
+  line-height: 1.5;
+  font-size: 16px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  margin: 0;
 }
 
-/* Decorative plant icons (subtle background) */
-body::before {
-    content: "🌿🌱🌿";
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    font-size: 3rem;
-    opacity: 0.1;
-    white-space: pre;
-    pointer-events: none;
-}
-
-body::after {
-    content: "🍃🌿🍃";
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 2.5rem;
-    opacity: 0.1;
-    pointer-events: none;
-}
-
-/* ----- MAIN CARD (glassmorphism) ----- */
+/* ---------- LOGIN CARD (Glassmorphism + rounded corners) ---------- */
 .box {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    border-radius: 48px;
-    padding: 2.5rem 2rem;
-    width: 100%;
-    max-width: 460px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-    border: 1px solid rgba(46, 125, 50, 0.2);
-    animation: fadeSlideUp 0.5s ease;
+  max-width: 460px;
+  width: 100%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: 2.5rem 2rem 2.8rem;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08), var(--shadow-green);
+  transition: var(--transition);
 }
 
 .box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 28px 48px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 25px 45px -12px rgba(108, 197, 81, 0.35);
 }
 
-/* Heading */
+/* ---------- HEADING (Geometric Bold) ---------- */
 .box h2 {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 600;
-    color: #2e7d32;
-    margin-bottom: 1.8rem;
-    letter-spacing: -0.5px;
-    position: relative;
-    display: inline-block;
-    width: 100%;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 2.2rem;
+  letter-spacing: -0.03em;
+  color: var(--text-heading);
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
 }
 
+/* decorative green underline */
 .box h2::after {
-    content: "";
-    display: block;
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, #6b8c42, #2e7d32);
-    margin: 8px auto 0;
-    border-radius: 4px;
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--lime-green);
+  border-radius: 10px;
+  margin: 0.75rem auto 0;
 }
 
-/* Form inputs */
-.box input {
-    width: 100%;
-    padding: 14px 18px;
-    margin-bottom: 0.5rem;
-    border: 1px solid #d0e2c0;
-    border-radius: 48px;
-    font-size: 1rem;
-    font-family: inherit;
-    background: #fefef7;
-    transition: all 0.2s;
+/* ---------- FORM INPUTS (Pill shape + modern) ---------- */
+#loginForm input {
+  width: 100%;
+  padding: 14px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-heading);
+  background: white;
+  border: 1.5px solid #e2e8e2;
+  border-radius: var(--radius-pill);
+  transition: var(--transition);
+  outline: none;
 }
 
-.box input:focus {
-    outline: none;
-    border-color: #2e7d32;
-    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
-    background: white;
+#loginForm input:focus {
+  border-color: var(--lime-green);
+  box-shadow: 0 0 0 3px rgba(108, 197, 81, 0.2);
 }
 
-.box input::placeholder {
-    color: #9bbf8f;
-    font-weight: 400;
+#loginForm input::placeholder {
+  color: #b0c0b0;
+  font-weight: 400;
 }
 
-/* Error messages */
+/* spacing between fields */
+#email {
+  margin-bottom: 0;
+}
+
+#password {
+  margin-top: 6px;
+}
+
+/* ---------- ERROR MESSAGES (Accent Red) ---------- */
 .error {
-    color: #c62828;
-    font-size: 0.75rem;
-    margin: -0.3rem 0 0.8rem 1rem;
-    font-weight: 500;
-    display: block;
-    animation: shake 0.2s ease-in-out 0s 2;
+  color: var(--error-red);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-top: 6px;
+  margin-bottom: 14px;
+  padding-left: 16px;
+  font-family: 'Inter', monospace;
 }
 
-/* Submit button */
-.box button {
-    width: 100%;
-    background: linear-gradient(135deg, #2e7d32, #1b5e20);
-    border: none;
-    color: white;
-    padding: 14px 20px;
-    border-radius: 48px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 0.5rem;
-    font-family: inherit;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    position: relative;
-    overflow: hidden;
+#emailError, #passwordError {
+  min-height: 1.6rem;
 }
 
-.box button::before {
-    content: "🌱";
-    position: absolute;
-    left: -30px;
-    opacity: 0;
-    transition: all 0.3s;
-    font-size: 1.2rem;
-}
-
-.box button:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.box button:hover::before {
-    left: 20px;
-    opacity: 1;
-}
-
-/* Server error (global) */
 #serverError {
-    text-align: center;
-    margin-top: 1rem;
-    padding: 8px;
-    border-radius: 40px;
-    background: #ffefef;
-    color: #c62828;
-    font-size: 0.85rem;
+  text-align: center;
+  background: rgba(229, 62, 62, 0.08);
+  border-radius: 50px;
+  padding: 10px 16px;
+  margin-top: 20px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  border-left: 3px solid var(--error-red);
 }
 
-/* ----- ANIMATIONS ----- */
-@keyframes fadeSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ---------- LOGIN BUTTON (Pill + Green Glow) ---------- */
+button[type="submit"] {
+  background: var(--lime-green);
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 14px 24px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-green);
+  margin-top: 12px;
 }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    75% { transform: translateX(4px); }
+button[type="submit"]:hover {
+  background: #5bb545;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
-/* ----- RESPONSIVE (mobile) ----- */
+button[type="submit"]:active {
+  transform: translateY(1px);
+}
+
+/* ---------- RESPONSIVE ---------- */
 @media (max-width: 520px) {
-    body {
-        padding: 1rem;
-    }
-
-    .box {
-        padding: 1.8rem 1.2rem;
-        border-radius: 32px;
-    }
-
-    .box h2 {
-        font-size: 1.6rem;
-    }
-
-    .box input {
-        padding: 12px 16px;
-    }
-
-    .box button {
-        padding: 12px 16px;
-    }
-
-    body::before,
-    body::after {
-        font-size: 2rem;
-        opacity: 0.08;
-    }
+  body {
+    padding: 1rem;
+  }
+  .box {
+    padding: 1.8rem 1.5rem 2rem;
+  }
+  .box h2 {
+    font-size: 1.8rem;
+  }
+  #loginForm input {
+    padding: 12px 18px;
+    font-size: 0.9rem;
+  }
+  button[type="submit"] {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
 }
 
-/* Optional: remove extra whitespace */
-.error:empty {
-    display: none;
+/* ---------- ACCESSIBILITY & UTILITY ---------- */
+button[type="submit"]:focus-visible,
+#loginForm input:focus-visible {
+  outline: 2px solid var(--lime-green);
+  outline-offset: 2px;
+}
+
+/* subtle animation for error appearance */
+.error {
+  transition: opacity 0.15s ease;
 }
     </style>
 

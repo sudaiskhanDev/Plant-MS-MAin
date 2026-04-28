@@ -3,327 +3,377 @@
 <head>
 <meta charset="UTF-8">
 <title>Cart</title>
-
+ 
 <style>
-    /* ==============================================
-   GREENNEST CART PAGE – COMPLETE CSS
-   Modern, plant‑themed, responsive, clean layout
-================================================= */
+    /* ============================================
+   CART PAGE - GREENNEST MODERN STYLES
+   Botanical fresh theme | Responsive cart items
+   Fonts: Inter + Outfit | Smooth interactions
+   ============================================ */
 
-/* ----- RESET & BASE ----- */
+/* ---------- IMPORT MODERN FONTS ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+/* ---------- CSS VARIABLES (Fresh Green Theme) ---------- */
+:root {
+  --primary-dark: #1A3A2E;
+  --primary-green: #2C7A47;
+  --primary-soft: #9DC3A2;
+  --primary-light: #E9F3EB;
+  --bg-white: #FFFFFF;
+  --bg-page: #F8FBF9;
+  --text-dark: #1E2F2A;
+  --text-muted: #5C6F66;
+  --text-light: #8A9C91;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 20px rgba(44, 122, 71, 0.06);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 18px 30px rgba(44, 122, 71, 0.12);
+  --radius-card: 20px;
+  --radius-btn: 50px;
+  --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+/* ---------- GLOBAL RESET ---------- */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #fafef7 0%, #e8f5e9 100%);
-    color: #1e2f1e;
-    line-height: 1.5;
-    min-height: 100vh;
-    padding: 2rem 1.5rem;
+  font-family: 'Inter', 'Outfit', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-dark);
+  line-height: 1.5;
+  font-size: 15px;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* ----- PAGE HEADING ----- */
+/* ---------- SIMPLE NAVIGATION LINKS (Home / Cart) ---------- */
+body > div:first-child {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--primary-light);
+}
+
+body > div:first-child a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-dark);
+  transition: var(--transition);
+  position: relative;
+  padding: 0.25rem 0;
+}
+
+body > div:first-child a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-green);
+  transition: width 0.25s ease;
+  border-radius: 2px;
+}
+
+body > div:first-child a:hover::after {
+  width: 100%;
+}
+
+body > div:first-child a:hover {
+  color: var(--primary-green);
+}
+
+/* ---------- PAGE HEADING ---------- */
 h2 {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2e7d32;
-    margin-bottom: 2rem;
-    position: relative;
-    display: inline-block;
-    width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  color: var(--primary-dark);
+  margin-bottom: 1.5rem;
+  border-left: 5px solid var(--primary-green);
+  padding-left: 1rem;
 }
 
-h2::after {
-    content: "";
-    display: block;
-    width: 80px;
-    height: 3px;
-    background: linear-gradient(90deg, #6b8c42, #2e7d32);
-    margin: 8px auto 0;
-    border-radius: 4px;
-}
-
-/* ----- CART CONTAINER (grid) ----- */
+/* ---------- CART CONTAINER (grid of items) ---------- */
 #cartContainer {
-    max-width: 1100px;
-    margin: 0 auto 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-/* Individual cart item card */
+/* loading / empty / login message */
+#cartContainer:empty::before {
+  content: "🛒 Your cart is empty";
+  display: block;
+  text-align: center;
+  padding: 3rem;
+  background: var(--bg-white);
+  border-radius: var(--radius-card);
+  color: var(--text-muted);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  border: 1px dashed var(--primary-soft);
+}
+
+/* Cart item card */
 .cart-box {
-    background: white;
-    border-radius: 32px;
-    padding: 1.2rem;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1.2rem;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: 1px solid rgba(46, 125, 50, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background: var(--bg-white);
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: 1px solid rgba(157, 195, 162, 0.3);
 }
 
 .cart-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-soft);
 }
 
-/* Product image */
+/* product image */
 .cart-box img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 24px;
-    background: #f5f7f2;
-    border: 1px solid #c8e6c9;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 16px;
+  background: var(--primary-light);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Product details area */
+/* product details block */
 .cart-box > div:nth-child(2) {
-    flex: 2;
-    min-width: 160px;
+  flex: 2;
+  min-width: 180px;
 }
 
 .cart-box h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #1b5e20;
-    margin-bottom: 0.3rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
 }
 
 .cart-box p {
-    margin: 0.2rem 0;
-    font-size: 0.9rem;
-    color: #4a5b4a;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
 }
 
-.cart-box p:first-of-type {
-    font-weight: 500;
-    color: #2e7d32;
-}
-
-/* Quantity and actions area */
+/* buttons container */
 .cart-box > div:last-child {
-    display: flex;
-    gap: 0.6rem;
-    align-items: center;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
+/* button base */
 .cart-box button {
-    border: none;
-    padding: 6px 14px;
-    border-radius: 40px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 48px;
 }
 
-/* Increment button (+)
+/* increment */
 .inc {
-    background: #e8f5e9;
-    color: #2e7d32;
+  background: var(--primary-green);
+  color: white;
+  box-shadow: 0 2px 6px rgba(44, 122, 71, 0.2);
 }
 
 .inc:hover {
-    background: #2e7d32;
-    color: white;
-    transform: scale(1.02);
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Decrement button (-) */
+/* decrement */
 .dec {
-    background: #fff3e0;
-    color: #e67e22;
+  background: var(--primary-light);
+  color: var(--primary-dark);
 }
 
 .dec:hover {
-    background: #e67e22;
-    color: white;
-    transform: scale(1.02);
+  background: var(--primary-soft);
+  transform: translateY(-2px);
 }
 
-/* Delete button */
+/* delete button */
 .del {
-    background: #ffefef;
-    color: #c62828;
+  background: #FEF5F3;
+  color: #E53E3E;
+  border: 1px solid rgba(229, 62, 62, 0.3);
 }
 
 .del:hover {
-    background: #c62828;
-    color: white;
-    transform: scale(1.02);
+  background: #E53E3E;
+  color: white;
+  transform: translateY(-2px);
+  border-color: #E53E3E;
 }
 
-/* ----- TOTAL SECTION ----- */
+/* ---------- TOTAL PRICE SECTION ---------- */
 .total {
-    max-width: 1100px;
-    margin: 1rem auto 1.5rem;
-    text-align: right;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #1b5e20;
-    background: white;
-    padding: 1rem 1.8rem;
-    border-radius: 60px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    border: 1px solid #c8e6c9;
-    display: inline-block;
-    width: auto;
-    float: right;
-    clear: both;
+  background: var(--bg-white);
+  border-radius: var(--radius-card);
+  padding: 1rem 1.5rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--primary-green);
+  text-align: right;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--primary-light);
 }
 
-/* Clearfix for total alignment */
-body::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* ----- CHECKOUT LINK (styled as button) ----- */
+/* checkout link */
 a[href="./Checkout.html"] {
-    display: inline-block;
-    background: linear-gradient(135deg, #2e7d32, #1b5e20);
-    color: white;
-    text-decoration: none;
-    padding: 14px 32px;
-    border-radius: 60px;
-    font-weight: 700;
-    font-size: 1rem;
-    transition: all 0.3s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    margin-top: 0.5rem;
-    clear: both;
-    float: right;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: fit-content;
-}
-
-a[href="./Checkout.html"]::before {
-    content: "🛍️";
-    font-size: 1.1rem;
+  display: inline-block;
+  background: var(--primary-green);
+  color: white;
+  text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.9rem 2rem;
+  border-radius: var(--radius-btn);
+  transition: var(--transition);
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(44, 122, 71, 0.25);
+  letter-spacing: 0.5px;
 }
 
 a[href="./Checkout.html"]:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #1b5e20, #0f3b0f);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  background: var(--primary-dark);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
-/* ----- EMPTY / LOGIN MESSAGE STYLING ----- */
-#cartContainer:empty::before,
-#cartContainer:contains("Please login") {
+/* checkout container (optional) */
+body > a:last-child {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  body {
+    padding: 1.5rem;
+  }
+  h2 {
+    font-size: 1.6rem;
+  }
+  .cart-box {
+    flex-direction: column;
+    align-items: stretch;
     text-align: center;
-    padding: 3rem;
-    background: white;
-    border-radius: 32px;
-    color: #6b8c42;
+  }
+  .cart-box img {
+    margin: 0 auto;
+  }
+  .cart-box > div:last-child {
+    justify-content: center;
+  }
+  .total {
+    text-align: center;
     font-size: 1.2rem;
-    display: block;
-}
-
-/* But the actual message is inserted as text, we style it via a class in JS? 
-   We'll add a fallback: any direct text inside #cartContainer gets centered. */
-#cartContainer {
+  }
+  a[href="./Checkout.html"] {
+    width: 100%;
     text-align: center;
+  }
 }
 
-/* If the container has simple text (like "Please login first"), style it nicely */
-#cartContainer:not(:has(.cart-box)) {
-    background: white;
-    padding: 3rem;
-    border-radius: 32px;
-    color: #2e7d32;
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+  .cart-box h3 {
+    font-size: 1rem;
+  }
+  .cart-box p {
+    font-size: 0.8rem;
+  }
+  .cart-box button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  .total {
     font-size: 1.1rem;
-    font-weight: 500;
+  }
 }
 
-/* ----- RESPONSIVE (mobile) ----- */
-@media (max-width: 700px) {
-    body {
-        padding: 1rem;
-    }
-    h2 {
-        font-size: 1.6rem;
-    }
-    .cart-box {
-        flex-direction: column;
-        text-align: center;
-    }
-    .cart-box img {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto;
-    }
-    .cart-box > div:nth-child(2) {
-        text-align: center;
-    }
-    .cart-box > div:last-child {
-        justify-content: center;
-    }
-    .total, a[href="./Checkout.html"] {
-        float: none;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-        width: 100%;
-        justify-content: center;
-    }
-    .total {
-        text-align: center;
-        font-size: 1.3rem;
-    }
+/* ---------- LOGIN MESSAGE STYLING (if token missing) ---------- */
+#cartContainer:contains("Please login first") {
+  background: var(--bg-white);
+  border-radius: var(--radius-card);
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
 }
 
-/* ----- ANIMATIONS ----- */
-@keyframes fadeSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* fallback for text content (pure JS message) */
+#cartContainer[innerHTML*="login"] {
+  background: var(--bg-white);
+  border-radius: var(--radius-card);
+  padding: 2rem;
+  text-align: center;
 }
 
-.cart-box {
-    animation: fadeSlideUp 0.3s ease;
+/* ---------- ACCESSIBILITY & FOCUS ---------- */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--primary-green);
+  outline-offset: 2px;
+  border-radius: var(--radius-btn);
 }
 
-/* Custom scrollbar */
-body::-webkit-scrollbar {
-    width: 8px;
+/* ---------- SCROLLBAR ---------- */
+::-webkit-scrollbar {
+  width: 6px;
 }
-body::-webkit-scrollbar-track {
-    background: #e0e8e0;
-    border-radius: 10px;
+::-webkit-scrollbar-track {
+  background: var(--primary-light);
+  border-radius: 10px;
 }
-body::-webkit-scrollbar-thumb {
-    background: #2e7d32;
-    border-radius: 10px;
+::-webkit-scrollbar-thumb {
+  background: var(--primary-soft);
+  border-radius: 10px;
 }
 </style>
  
 </head>
 
 <body>
-
+  <div>
+            <a href="../index.html">Home</a>
+            <a href="../Pages/Cart.html">Cart</a>
+        </div>
 <h2>My Cart</h2>
 
 <div id="cartContainer">Loading...</div>
