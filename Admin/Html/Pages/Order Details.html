@@ -312,7 +312,7 @@ table td button:last-child:hover {
                 <tr>
                     <th>ID</th>
                     <th>Order ID</th>
-                    <th>Plant ID</th>
+                    <th>Plant</th>
                     <th>Quantity</th>
                     <th>Price</th>
                     <th>Actions</th>
@@ -342,17 +342,41 @@ function loadOrderDetails() {
 
             data.forEach(item => {
                 rows += `
-                <tr>
-                    <td>${item.order_detail_id}</td>
-                    <td>${item.order_id}</td>
-                    <td>${item.plant ? item.plant.name : 'N/A'}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.price}</td>
-                    <td>
-                        <button style="background-color: #4a4a4a; color: white;" onclick="editOrderDetail(${item.order_detail_id}, ${item.order_id}, ${item.plant_id}, ${item.quantity}, ${item.price})">Edit</button>
-                        <button class="btn-delete" onclick="deleteOrderDetail(${item.order_detail_id})">Delete</button>
-                    </td>
-                </tr>`;
+<tr>
+    <td>${item.order_detail_id}</td>
+    <td>${item.order_id}</td>
+
+    <!-- PLANT IMAGE + NAME -->
+    <td>
+        <div style="display:flex; align-items:center; gap:10px; justify-content:center;">
+            
+            <img src="${item.plant?.image 
+                ? 'http://localhost:8000/storage/' + item.plant.image 
+                : 'https://via.placeholder.com/40'}"
+                width="40"
+                height="40"
+                style="border-radius:50%; object-fit:cover; border:2px solid #2e7d32;"
+            >
+
+            <span>${item.plant?.name || 'N/A'}</span>
+
+        </div>
+    </td>
+
+    <td>${item.quantity}</td>
+    <td>${item.price}</td>
+
+    <td>
+        <button style="background-color: #4a4a4a; color: white;"
+            onclick="editOrderDetail(${item.order_detail_id}, ${item.order_id}, ${item.plant_id}, ${item.quantity}, ${item.price})">
+            Edit
+        </button>
+
+        <button class="btn-delete" onclick="deleteOrderDetail(${item.order_detail_id})">
+            Delete
+        </button>
+    </td>
+</tr>`;
             });
 
             document.getElementById("orderDetailTable").innerHTML = rows;
