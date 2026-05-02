@@ -17,8 +17,18 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
 });
 
 
+// use App\Http\Controllers\Api\AdminStaffController;
+
+// Route::prefix('admin-staff')->group(function () {
+//     Route::get('/', [AdminStaffController::class, 'index']);
+    
+// });
+
 use App\Http\Controllers\Api\AdminStaffController;
 
 Route::prefix('admin-staff')->group(function () {
     Route::get('/', [AdminStaffController::class, 'index']);
+
+    // ✅ ADD THIS
+    Route::delete('/{id}', [AdminStaffController::class, 'destroy']);
 });
