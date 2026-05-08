@@ -1276,3 +1276,44 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+        #guestButtons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #guestButtons a {
+            text-decoration: none;
+            color: var(--primary-green, #2C7A47);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        #guestButtons a:last-child {
+            padding: 6px 12px;
+            border: 1.5px solid var(--primary-green, #2C7A47);
+            border-radius: 8px;
+        }
+        #guestButtons a:last-child:hover {
+            background: var(--primary-green, #2C7A47);
+            color: white;
+        }
+        .login-btn, .register-btn {
+            cursor: pointer;
+        }
+ 

@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout</title>
+<title>Checkout — GreenNest</title>
 
 <script src="https://js.stripe.com/v3/"></script>
  
@@ -11,7 +12,7 @@
     /* ============================================
    CHECKOUT PAGE - GREENNEST MODERN STYLES
    Botanical fresh theme | Stripe card integration
-   Responsive form | Clean typography
+   Responsive form | Loading button animation
    ============================================ */
 
 /* ---------- IMPORT MODERN FONTS ---------- */
@@ -208,7 +209,6 @@ input::placeholder {
   box-shadow: 0 0 0 3px rgba(44, 122, 71, 0.1);
 }
 
-/* Stripe iframe will inherit container styling */
 #card-element {
   width: 100%;
   min-height: 40px;
@@ -226,7 +226,7 @@ input::placeholder {
   font-weight: 500;
 }
 
-/* ---------- PLACE ORDER BUTTON ---------- */
+/* ---------- PLACE ORDER BUTTON (LOADING STATES) ---------- */
 button {
   background: var(--primary-green);
   color: white;
@@ -242,16 +242,45 @@ button {
   transition: var(--transition);
   box-shadow: 0 2px 8px rgba(44, 122, 71, 0.2);
   margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background: var(--primary-dark);
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(44, 122, 71, 0.25);
 }
 
-button:active {
+button:active:not(:disabled) {
   transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none;
+  background: var(--primary-green);
+  filter: grayscale(0.05);
+}
+
+/* Spinner animation for loading state */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.7s linear infinite;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* ---------- RESPONSIVE DESIGN ---------- */
@@ -297,7 +326,6 @@ button:active {
   font-style: italic;
 }
 
-/* ---------- STRIPE CARD ELEMENT STYLES (additional polish) ---------- */
 .StripeElement {
   width: 100%;
   padding: 0.5rem 0;
@@ -335,41 +363,38 @@ a:focus-visible {
 <body>
 
 <div class="container">
- <div>
-            <a href="../index.html">Home</a>
-            <a href="../Pages/Cart.html">Cart</a>
-        </div>
-<h2>Checkout</h2>
+  <div>
+    <a href="../index.html">Home</a>
+    <a href="../Pages/Cart.html">Cart</a>
+  </div>
+  <h2>Checkout</h2>
 
-<div class="box">
+  <div class="box">
     <h3>Cart Items</h3>
     <div id="cartContainer">Loading...</div>
     <h3 id="totalBox"></h3>
-</div>
+  </div>
 
-<div class="box">
+  <div class="box">
+    <input type="text" id="name" placeholder="Full Name" autocomplete="name">
+    <input type="text" id="phone" placeholder="Phone" autocomplete="tel">
+    <input type="text" id="city" placeholder="City" autocomplete="address-level2">
+    <input type="text" id="zip" placeholder="Zip" autocomplete="postal-code">
+    <input type="text" id="address" placeholder="Shipping Address" autocomplete="street-address">
 
-<input type="text" id="name" placeholder="Full Name">
-<input type="text" id="phone" placeholder="Phone">
-<input type="text" id="city" placeholder="City">
-<input type="text" id="zip" placeholder="Zip">
-<input type="text" id="address" placeholder="Shipping Address">
+    <select id="payment_method">
+      <option value="cod">Cash on Delivery</option>
+      <option value="card">Card (Stripe)</option>
+    </select>
 
-<select id="payment_method">
-    <option value="cod">Cash on Delivery</option>
-    <option value="card">Card (Stripe)</option>
-</select>
+    <div id="card-container" style="display:none;">
+      <div id="card-element"></div>
+    </div>
 
-<div id="card-container" style="display:none;">
-    <div id="card-element"></div>
-</div>
+    <div id="errorBox" class="error" style="display: none;"></div>
 
-<div id="errorBox" class="error"></div>
-
-<button onclick="placeOrder()">Place Order</button>
-
-</div>
-
+    <button id="placeOrderBtn">Place Order</button>
+  </div>
 </div>
 
 <script>
@@ -380,7 +405,7 @@ const STRIPE_API = `${API}/payments/create-payment-intent`;
 
 const token = localStorage.getItem("token");
 
-// Stripe init
+// Stripe initialization
 const stripe = Stripe("pk_test_51T3YGjPubxVvHrmFHvOK8ut1lXw8X7nL77iYk0Y47aj4G6758ndZDGRnWu54qEuv2mk3feOfbRNTKZmwRe9A8Cbx00VNTxBm5d");
 
 const elements = stripe.elements();
@@ -389,183 +414,298 @@ const card = elements.create("card");
 let cartItems = [];
 let totalAmount = 0;
 
+// DOM elements
+const placeOrderBtn = document.getElementById("placeOrderBtn");
+const errorBox = document.getElementById("errorBox");
+const nameInput = document.getElementById("name");
+const phoneInput = document.getElementById("phone");
+const cityInput = document.getElementById("city");
+const zipInput = document.getElementById("zip");
+const addressInput = document.getElementById("address");
+const paymentMethodSelect = document.getElementById("payment_method");
+const cardContainer = document.getElementById("card-container");
+
+// Helper: show error message
+function showError(message) {
+  errorBox.innerText = message;
+  errorBox.style.display = "block";
+  // auto hide after 5 seconds
+  setTimeout(() => {
+    if (errorBox.innerText === message) {
+      errorBox.style.display = "none";
+    }
+  }, 5000);
+}
+
+function hideError() {
+  errorBox.style.display = "none";
+  errorBox.innerText = "";
+}
+
+// Helper: set button loading state
+function setButtonLoading(isLoading, originalText = "Place Order") {
+  if (isLoading) {
+    // Disable button and show spinner + loading text
+    placeOrderBtn.disabled = true;
+    // Store original text if not already stored
+    if (!placeOrderBtn.hasAttribute("data-original-text")) {
+      placeOrderBtn.setAttribute("data-original-text", placeOrderBtn.innerText);
+    }
+    // Clear existing content and add spinner + text
+    placeOrderBtn.innerHTML = '<span class="spinner"></span> Processing...';
+  } else {
+    // Re-enable and restore original text
+    placeOrderBtn.disabled = false;
+    const original = placeOrderBtn.getAttribute("data-original-text") || originalText;
+    placeOrderBtn.innerHTML = original;
+    placeOrderBtn.removeAttribute("data-original-text");
+  }
+}
+
 // ================= CART LOAD =================
 async function loadCart() {
+  if (!token) {
+    document.getElementById("cartContainer").innerHTML = 
+      '<div class="cart-item"><span>🔐 Login required to view cart</span></div>';
+    document.getElementById("totalBox").innerText = "Total: $0.00";
+    return;
+  }
 
-    if (!token) {
-        document.getElementById("cartContainer").innerHTML = "Login required";
-        return;
+  try {
+    let res = await fetch(CART_API, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+
+    let data = await res.json();
+    cartItems = data.data || data || [];
+
+    let container = document.getElementById("cartContainer");
+    container.innerHTML = "";
+    totalAmount = 0;
+
+    if (!cartItems.length) {
+      container.innerHTML = '<div class="cart-item"><span>✨ Your cart is empty</span></div>';
+      document.getElementById("totalBox").innerText = "Total: $0.00";
+      return;
     }
 
-    try {
-        let res = await fetch(CART_API, {
-            headers: { "Authorization": "Bearer " + token }
-        });
-
-        let data = await res.json();
-
-        cartItems = data.data || data;
-
-        let container = document.getElementById("cartContainer");
-        container.innerHTML = "";
-        totalAmount = 0;
-
-        if (!cartItems.length) {
-            container.innerHTML = "Cart is empty";
-            return;
-        }
-
-        cartItems.forEach(item => {
-
-    if (!item.plant) return; // skip broken records
-
-    let price = (item.plant?.price ?? 0) * (item.quantity ?? 0);
-    totalAmount += price;
-
-    container.innerHTML += `
+    cartItems.forEach(item => {
+      if (!item.plant) return;
+      let price = (item.plant?.price ?? 0) * (item.quantity ?? 0);
+      totalAmount += price;
+      container.innerHTML += `
         <div class="cart-item">
-            <span>${item.plant?.name ?? 'Deleted Product'} x ${item.quantity}</span>
-            <span>$${price}</span>
+          <span>🌿 ${escapeHtml(item.plant?.name ?? 'Deleted Product')} x ${item.quantity}</span>
+          <span>$${price.toFixed(2)}</span>
         </div>
-    `;
-});
+      `;
+    });
 
-        document.getElementById("totalBox").innerText =
-            "Total: $" + totalAmount.toFixed(2);
+    document.getElementById("totalBox").innerHTML = 
+      `<span>Total: $${totalAmount.toFixed(2)}</span>`;
+  } catch (err) {
+    console.error("Cart load error:", err);
+    document.getElementById("cartContainer").innerHTML = 
+      '<div class="cart-item"><span>⚠️ Failed to load cart</span></div>';
+  }
+}
 
-    } catch (err) {
-        console.log(err);
-        document.getElementById("cartContainer").innerText = "Error loading cart";
-    }
+// simple escape helper
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
 }
 
 // ================= PAYMENT TOGGLE =================
 let cardMounted = false;
 
-document.getElementById("payment_method").addEventListener("change", function () {
-    if (this.value === "card") {
-        document.getElementById("card-container").style.display = "block";
-
-        if (!cardMounted) {
-            card.mount("#card-element");
-            cardMounted = true;
-        }
-    } else {
-        document.getElementById("card-container").style.display = "none";
+paymentMethodSelect.addEventListener("change", function () {
+  if (this.value === "card") {
+    cardContainer.style.display = "block";
+    if (!cardMounted) {
+      card.mount("#card-element");
+      cardMounted = true;
     }
+  } else {
+    cardContainer.style.display = "none";
+  }
 });
 
-// ================= PLACE ORDER =================
+// ================= PLACE ORDER WITH LOADING STATE =================
 async function placeOrder() {
+  // Reset any previous error and hide error box
+  hideError();
 
-    document.getElementById("errorBox").innerText = "";
+  // ========== 1. VALIDATION (basic) ==========
+  if (!cartItems.length) {
+    showError("🛒 Cart is empty. Add some items before checkout.");
+    return;
+  }
 
-    if (!cartItems.length) {
-        document.getElementById("errorBox").innerText = "Cart is empty";
-        return;
-    }
+  const name = nameInput.value.trim();
+  const phone = phoneInput.value.trim();
+  const city = cityInput.value.trim();
+  const zip = zipInput.value.trim();
+  const shippingAddress = addressInput.value.trim();
 
-    let payload = {
-        name: document.getElementById("name").value,
-        phone: document.getElementById("phone").value,
-        city: document.getElementById("city").value,
-        zip: document.getElementById("zip").value,
-        shipping_address: document.getElementById("address").value,
-        payment_method: document.getElementById("payment_method").value,
-        payment_id: null
-    };
+  if (!name || !phone || !city || !zip || !shippingAddress) {
+    showError("❌ Please fill all shipping fields (Name, Phone, City, Zip, Address).");
+    return;
+  }
 
-    try {
+  // Optional: phone simple validation (basic)
+  if (phone.length < 5) {
+    showError("📞 Please enter a valid phone number.");
+    return;
+  }
 
-        // ================= STRIPE =================
-        if (payload.payment_method === "card") {
+  const paymentMethod = paymentMethodSelect.value;
 
-            const { error, paymentMethod } = await stripe.createPaymentMethod({
-                type: "card",
-                card: card,
-            });
+  let payload = {
+    name: name,
+    phone: phone,
+    city: city,
+    zip: zip,
+    shipping_address: shippingAddress,
+    payment_method: paymentMethod,
+    payment_id: null
+  };
 
-            if (error) {
-                document.getElementById("errorBox").innerText = error.message;
-                return;
-            }
+  // Activate loading UI (disable button + spinner)
+  setButtonLoading(true, "Place Order");
 
-            const intentRes = await fetch(STRIPE_API, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-                body: JSON.stringify({ amount: totalAmount })
-            });
-
-            const intentText = await intentRes.text();
-
-            let intentData;
-            try {
-                intentData = JSON.parse(intentText);
-            } catch (e) {
-                document.getElementById("errorBox").innerText = intentText;
-                return;
-            }
-
-            if (!intentData.clientSecret) {
-                document.getElementById("errorBox").innerText = "Stripe failed";
-                return;
-            }
-
-            const { error: stripeError, paymentIntent } =
-                await stripe.confirmCardPayment(intentData.clientSecret, {
-                    payment_method: {
-                        card: card
-                    }
-                });
-
-            if (stripeError) {
-                document.getElementById("errorBox").innerText = stripeError.message;
-                return;
-            }
-
-            payload.payment_id = paymentIntent.id;
-        }
-
-        // ================= CHECKOUT =================
-        let res = await fetch(CHECKOUT_API, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            },
-            body: JSON.stringify(payload)
+  try {
+    // ========== 2. STRIPE CARD HANDLING (if card selected) ==========
+    if (paymentMethod === "card") {
+      // Double-check that card element is mounted
+      if (!cardMounted) {
+        card.mount("#card-element");
+        cardMounted = true;
+      }
+      
+      // Create payment method from card element
+      const { error: pmError, paymentMethod: stripePaymentMethod } = 
+        await stripe.createPaymentMethod({
+          type: "card",
+          card: card,
         });
 
-        let text = await res.text();
+      if (pmError) {
+        throw new Error(pmError.message);
+      }
 
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            document.getElementById("errorBox").innerText = text;
-            return;
-        }
+      // Request payment intent from backend
+      const intentResponse = await fetch(STRIPE_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ amount: totalAmount })
+      });
 
-        if (!res.ok) {
-            document.getElementById("errorBox").innerText =
-                data.message || "Checkout failed";
-            return;
-        }
+      const intentText = await intentResponse.text();
+      let intentData;
+      try {
+        intentData = JSON.parse(intentText);
+      } catch (e) {
+        throw new Error("Invalid response from payment server: " + intentText.slice(0, 100));
+      }
 
-        alert("Order placed successfully!");
-        window.location.href = "thankyou.html";
+      if (!intentData.clientSecret) {
+        throw new Error("Stripe payment intent creation failed. Missing client secret.");
+      }
 
-    } catch (err) {
-        console.log(err);
-        document.getElementById("errorBox").innerText = "Server error";
+      // Confirm card payment
+      const { error: confirmError, paymentIntent } = 
+        await stripe.confirmCardPayment(intentData.clientSecret, {
+          payment_method: {
+            card: card
+          }
+        });
+
+      if (confirmError) {
+        throw new Error(confirmError.message);
+      }
+
+      payload.payment_id = paymentIntent.id;
     }
+
+    // ========== 3. SUBMIT ORDER TO BACKEND ==========
+    const checkoutRes = await fetch(CHECKOUT_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const responseText = await checkoutRes.text();
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      throw new Error("Server response error: " + responseText.slice(0, 150));
+    }
+
+    if (!checkoutRes.ok) {
+      throw new Error(responseData.message || "Checkout failed. Please try again.");
+    }
+
+    // Success! 🎉
+    alert("✅ Order placed successfully! Thank you for shopping with GreenNest.");
+    window.location.href = "thankyou.html";
+
+  } catch (err) {
+    console.error("Checkout error:", err);
+    showError(err.message || "Something went wrong. Please check your details and try again.");
+    // Re-enable button & remove loading spinner
+    setButtonLoading(false);
+    // IMPORTANT: we must not redirect, so stop further execution
+    return;
+  }
+
+  // If everything succeeded (redirect happens), we don't need to reset button because page unloads.
+  // But if redirect somehow fails, we reset anyway for safety (code after redirect won't run)
+  setButtonLoading(false);
 }
 
-// init
-loadCart();
+// Attach event listener to the button (instead of inline onclick for cleaner loading control)
+placeOrderBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  placeOrder();
+});
+
+// ================= ADDITIONAL: Reset loading on page before unload (optional) =================
+window.addEventListener("beforeunload", () => {
+  if (placeOrderBtn.disabled) {
+    // ensure no side effects
+    placeOrderBtn.disabled = false;
+  }
+});
+
+// ================= INITIALIZE PAGE =================
+(async function init() {
+  await loadCart();
+  // Pre-setup: if card was never mounted, we only mount when needed
+  // but for safety, check if card method selected by default? Not needed.
+  // Also ensure if payment_method initially "cod", card container hidden.
+  if (paymentMethodSelect.value !== "card") {
+    cardContainer.style.display = "none";
+  } else {
+    cardContainer.style.display = "block";
+    if (!cardMounted) {
+      card.mount("#card-element");
+      cardMounted = true;
+    }
+  }
+})();
 </script>
 
 </body>

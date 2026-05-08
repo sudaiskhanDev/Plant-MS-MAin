@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../Css/Main Page.css">
     <title>GreenNest</title>
+    <style>
+        #guestButtons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #guestButtons a {
+            text-decoration: none;
+            color: var(--primary-green, #2C7A47);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        #guestButtons a:last-child {
+            padding: 6px 12px;
+            border: 1.5px solid var(--primary-green, #2C7A47);
+            border-radius: 8px;
+        }
+        #guestButtons a:last-child:hover {
+            background: var(--primary-green, #2C7A47);
+            color: white;
+        }
+        .login-btn, .register-btn {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     
@@ -24,6 +50,7 @@
     <div id="guestButtons">
         <a href="./Auth/Login.html"><button class="login-btn">Login</button></a>
         <a href="./Auth/Register.html"><button class="register-btn">Register</button></a>
+        <a class="admin-btn" href="../../Login.html">Admin</a>
     </div>
 
     <!-- Logout -->

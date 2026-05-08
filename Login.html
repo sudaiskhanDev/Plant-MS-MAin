@@ -217,6 +217,29 @@ button[type="submit"]:focus-visible,
 .error {
   transition: opacity 0.15s ease;
 }
+
+/* ---------- BACK TO HOME NAV ---------- */
+.nav {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
+
+.nav a {
+  text-decoration: none;
+  color: var(--lime-green);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav a:hover {
+  color: #1A1A1A;
+  transform: translateX(-3px);
+}
     </style>
 
  
@@ -226,6 +249,10 @@ button[type="submit"]:focus-visible,
 </head>
 <body>
 
+
+  <div class="nav">
+    <a href="./Frontend/Html/index.html">Back to Home</a>
+  </div>
 <div class="box">
     <h2>Login</h2>
 
